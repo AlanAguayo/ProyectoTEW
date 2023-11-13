@@ -1,11 +1,11 @@
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import Announcement from "../components/Announcement";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import Announcement from "../../../components/client/announcement/Announcement";
+import Footer from "../../../components/client/footer/Footer";
+import Navbar from "../../../components/client/navbar/Navbar";
 import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
-import { userRequest } from "../requestMethods";
+import { userRequest } from "../../../requestMethods";
 
 const KEY = process.env.REACT_APP_STRIPE;
 

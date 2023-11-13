@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import Navbar from "../components/Navbar";
-import Announcement from "../components/Announcement";
-import Products from "../components/Products";
-import Newsletter from "../components/Newsletter";
-import Footer from "../components/Footer";
+import Navbar from "../../../components/client/navbar/Navbar";
+import Announcement from "../../../components/client/announcement/Announcement";
+import Products from "../../../components/client/products/Products";
+import Newsletter from "../../../components/client/newsletter/Newsletter";
+import Footer from "../../../components/client/footer/Footer";
 import { useLocation } from "react-router";
 import { useState } from "react";
 

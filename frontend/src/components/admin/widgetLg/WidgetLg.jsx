@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { userRequest } from "../../admin/src/requestMethods";
+import { userRequest } from "../../../requestMethods";
 import "./widgetLg.css";
 import {format} from "timeago.js"
 

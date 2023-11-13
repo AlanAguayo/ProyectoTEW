@@ -1,6 +1,6 @@
 import "./featuredInfo.css";
 import { useEffect, useState } from "react";
-import { userRequest } from "../../admin/src/requestMethods";
+import { userRequest } from "../../../requestMethods";
 
 export default function FeaturedInfo() {
   const [income, setIncome] = useState([]);

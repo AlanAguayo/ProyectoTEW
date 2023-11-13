@@ -1,5 +1,5 @@
 import "./userList.css";
-import { userRows } from "../../dummyData";
+import { userRows } from "../../../dummyData";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 

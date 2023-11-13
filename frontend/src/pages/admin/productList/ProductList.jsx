@@ -2,11 +2,11 @@ import "./productList.css";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteProduct, getProducts } from "../../redux/apiCalls";
+import { deleteProduct, getProducts } from "../../../redux/apiCallsAdmin";
 
 export default function ProductList() {
   const dispatch = useDispatch();
-  const products = useSelector((state) => state.product.products);
+  //const products = useSelector((state) => state.product.products);
 
   useEffect(() => {
     getProducts(dispatch);

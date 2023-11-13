@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import Announcement from "../components/Announcement";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
-import Newsletter from "../components/Newsletter";
+import Announcement from "../../../components/client/announcement/Announcement";
+import Footer from "../../../components/client/footer/Footer";
+import Navbar from "../../../components/client/navbar/Navbar";
+import Newsletter from "../../../components/client/newsletter/Newsletter";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { publicRequest } from "../requestMethods";
-import { addProduct } from "../redux/cartRedux";
+import { publicRequest } from "../../../requestMethods";
+import { addProduct } from "../../../redux/cartRedux";
 import { useDispatch } from "react-redux";
 
 const Container = styled.div``;

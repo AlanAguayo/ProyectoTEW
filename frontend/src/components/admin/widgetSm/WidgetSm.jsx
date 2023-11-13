@@ -1,6 +1,6 @@
 import "./widgetSm.css";
 import { useEffect, useState } from "react";
-import { userRequest } from "../../admin/src/requestMethods";
+import { userRequest } from "../../../requestMethods";
 
 export default function WidgetSm() {
   const [users, setUsers] = useState([]);

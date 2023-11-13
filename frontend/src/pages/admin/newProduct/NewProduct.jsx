@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./newProduct.css";
-import { addProduct } from "../../redux/apiCalls";
+import { addProduct } from "../../../redux/apiCalls";
 import { useDispatch } from "react-redux";
 
 export default function NewProduct() {

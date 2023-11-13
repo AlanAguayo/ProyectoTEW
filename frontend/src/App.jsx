@@ -1,30 +1,44 @@
-import Product from "./pages/Product";
-import Home from "./pages/Home";
-import ProductList from "./pages/ProductList";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import Cart from "./pages/Cart";
+import Product from "./pages/client/product/Product";
+import Home from "./pages/client/home/Home";
+import ProductList from "./pages/client/productList/ProductList";
+import Register from "./pages/client/register/Register";
+import Login from "./pages/login/Login";
+import Recover from "./pages/recover/Recover"
+import Cart from "./pages/client/cart/Cart";
+import Success from "./pages/client/success/Success";
+import AdminHome from "./pages/admin/home/Home"
+import AdminNewProduct from "./pages/admin/newProduct/NewProduct"
+import AdminNewUser from "./pages/admin/newUser/NewUser"
+import AdminProduct from "./pages/admin/product/Product"
+import AdminProductList from "./pages/admin/productList/ProductList"
+import Profile from "./pages/client/profile/Profile"
+import AdminUserList from "./pages/admin/userList/UserList"
+
 import {
   BrowserRouter,
   Route,
   Routes,
-  Navigate,
 } from "react-router-dom";
-import Success from "./pages/Success";
-import { useSelector } from "react-redux";
 
 const App = () => {
-  const user = useSelector((state) => state.user.currentUser);
   return (
     <BrowserRouter>
     <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/products/:category" element={<ProductList />}/>
-        <Route path="/product/:id" element={<Product />}/>
+        <Route path="/login" element={<Login />}/>
+        <Route path="/recover" element={<Recover />}/>
         <Route path="/cart" element={<Cart />}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/product/:id" element={<Product />}/>
+        <Route path="/products/:category" element={<ProductList />}/>
+        <Route path="/register" element={<Register />}/>
         <Route path="/success" element={<Success />}/>
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />}/>
-        <Route path="/register" element={user ? <Navigate to="/" /> : <Register />}/>
+        <Route path="/profile" element={<Profile />}/>
+        <Route path="/admin" element={<AdminHome />}/>
+        <Route path="/admin/newProduct" element={<AdminNewProduct />}/>
+        <Route path="/admin/newUser" element={<AdminNewUser />}/>
+        <Route path="/admin/product/:id" element={<AdminProduct />}/>
+        <Route path="/admin/productList" element={<AdminProductList />}/>
+        <Route path="/admin/userList" element={<AdminUserList />}/>
     </Routes>
     </BrowserRouter>
   );

@@ -1,20 +1,17 @@
 import { Link, useLocation } from "react-router-dom";
 import "./product.css";
-import Chart from "../../components/chart/Chart";
-import { productData } from "../../dummyData";
+import Chart from "../../../components/admin/chart/Chart";
+import { productData } from "../../../dummyData";
 import { useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
-import { userRequest } from "../../requestMethods";
+import { userRequest } from "../../../requestMethods";
 
 export default function Product() {
   const location = useLocation();
   const productId = location.pathname.split("/")[2];
   const [pStats, setPStats] = useState([]);
 
-  const product = useSelector((state) =>
-    state.product.products.find((product) => product._id === productId)
-  );
-
+  
   const MONTHS = useMemo(
     () => [
       "Jan",
@@ -63,17 +60,17 @@ export default function Product() {
       </div>
       <div className="productTop">
         <div className="productTopLeft">
-          <Chart data={pStats} dataKey="Sales" title="Sales Performance" />
+          {"<Chart data={pStats} dataKey=Sales title=Sales Performance />"}
         </div>
         <div className="productTopRight">
           <div className="productInfoTop">
-            <img src={product.img} alt="" className="productInfoImg" />
-            <span className="productName">{product.title}</span>
+            <img src={""} alt="imagen" className="productInfoImg" />
+            <span className="productName">{"name"}</span>
           </div>
           <div className="productInfoBottom">
             <div className="productInfoItem">
               <span className="productInfoKey">id:</span>
-              <span className="productInfoValue">{product._id}</span>
+              <span className="productInfoValue">{"1"}</span>
             </div>
             <div className="productInfoItem">
               <span className="productInfoKey">sales:</span>
@@ -81,7 +78,7 @@ export default function Product() {
             </div>
             <div className="productInfoItem">
               <span className="productInfoKey">in stock:</span>
-              <span className="productInfoValue">{product.inStock}</span>
+              <span className="productInfoValue">{"33"}</span>
             </div>
           </div>
         </div>
@@ -90,11 +87,11 @@ export default function Product() {
         <form className="productForm">
           <div className="productFormLeft">
             <label>Product Name</label>
-            <input type="text" placeholder={product.title} />
+            <input type="text" placeholder={"title"} />
             <label>Product Description</label>
-            <input type="text" placeholder={product.desc} />
+            <input type="text" placeholder={"desc"} />
             <label>Price</label>
-            <input type="text" placeholder={product.price} />
+            <input type="text" placeholder={"price"} />
             <label>In Stock</label>
             <select name="inStock" id="idStock">
               <option value="true">Yes</option>
@@ -103,7 +100,7 @@ export default function Product() {
           </div>
           <div className="productFormRight">
             <div className="productUpload">
-              <img src={product.img} alt="" className="productUploadImg" />
+              <img src={""} alt="" className="productUploadImg" />
               <label for="file">
               </label>
               <input type="file" id="file" style={{ display: "none" }} />
