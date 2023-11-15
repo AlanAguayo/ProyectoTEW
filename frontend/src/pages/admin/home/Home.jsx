@@ -1,9 +1,9 @@
-import Chart from "../../../components/admin/chart/Chart";
-import FeaturedInfo from "../../../components/admin/featuredInfo/FeaturedInfo";
+import Chart from "../../../components/admin/Chart";
+import FeaturedInfo from "../../../components/admin/FeaturedInfo";
 import "./home.css";
 import { userData } from "../../../dummyData";
-import WidgetSm from "../../../components/admin/widgetSm/WidgetSm";
-import WidgetLg from "../../../components/admin/widgetLg/WidgetLg";
+import WidgetSm from "../../../components/admin/WidgetSm";
+import WidgetLg from "../../../components/admin/WidgetLg";
 import { useEffect, useMemo, useState } from "react";
 import { userRequest } from "../../../requestMethods";
 

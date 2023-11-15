@@ -1,17 +1,16 @@
-import Product from "./pages/client/product/Product";
-import Home from "./pages/client/home/Home";
-import ProductList from "./pages/client/productList/ProductList";
-import Register from "./pages/client/register/Register";
-import Login from "./pages/login/Login";
-import Recover from "./pages/recover/Recover"
-import Cart from "./pages/client/cart/Cart";
-import Success from "./pages/client/success/Success";
+import Product from "./pages/client/Product";
+import Home from "./pages/client/Home";
+import ProductList from "./pages/client/ProductList";
+import Register from "./pages/client/Register";
+import Login from "./pages/Login";
+import Cart from "./pages/client/Cart";
+import Success from "./pages/client/Success";
 import AdminHome from "./pages/admin/home/Home"
 import AdminNewProduct from "./pages/admin/newProduct/NewProduct"
 import AdminNewUser from "./pages/admin/newUser/NewUser"
 import AdminProduct from "./pages/admin/product/Product"
 import AdminProductList from "./pages/admin/productList/ProductList"
-import Profile from "./pages/client/profile/Profile"
+import Profile from "./pages/client/Profile"
 import AdminUserList from "./pages/admin/userList/UserList"
 
 import {
@@ -25,7 +24,6 @@ const App = () => {
     <BrowserRouter>
     <Routes>
         <Route path="/login" element={<Login />}/>
-        <Route path="/recover" element={<Recover />}/>
         <Route path="/cart" element={<Cart />}/>
         <Route path="/" element={<Home />} />
         <Route path="/product/:id" element={<Product />}/>

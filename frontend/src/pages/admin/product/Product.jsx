@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import "./product.css";
-import Chart from "../../../components/admin/chart/Chart";
+import Chart from "../../../components/admin/Chart";
 import { productData } from "../../../dummyData";
 import { useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
