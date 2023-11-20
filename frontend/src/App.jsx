@@ -12,6 +12,11 @@ import AdminProduct from "./pages/admin/Product"
 import AdminProductList from "./pages/admin/ProductList"
 import Profile from "./pages/client/Profile"
 import AdminUserList from "./pages/admin/UserList"
+import OrderList from "./pages/client/OrderList"
+import AdminOrderList from "./pages/admin/OrderList"
+import AdminCategories from "./pages/admin/Categories"
+import AdminCoupons from "./pages/admin/Coupons"
+import AdminPayMethod from "./pages/admin/PayMethod"
 
 import {
   BrowserRouter,
@@ -31,12 +36,17 @@ const App = () => {
         <Route path="/register" element={<Register />}/>
         <Route path="/success" element={<Success />}/>
         <Route path="/profile" element={<Profile />}/>
+        <Route path="/orders" element={<OrderList />}/>
         <Route path="/admin" element={<AdminHome />}/>
         <Route path="/admin/products/new" element={<AdminNewProduct />}/>
         <Route path="/admin/users/new" element={<AdminNewUser />}/>
         <Route path="/admin/product/:id" element={<AdminProduct />}/>
         <Route path="/admin/products" element={<AdminProductList />}/>
         <Route path="/admin/users" element={<AdminUserList />}/>
+        <Route path="/admin/orders" element={<AdminOrderList />}/>
+        <Route path="/admin/categories" element={<AdminCategories />}/>
+        <Route path="/admin/coupons" element={<AdminCoupons />}/>
+        <Route path="/admin/paymethod" element={<AdminPayMethod />}/>
     </Routes>
     </BrowserRouter>
   );

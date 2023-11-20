@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import Chart from "../../components/admin/Chart";
+import Chart from "../../components/Chart";
 import { productData } from "../../dummyData";
 import {
   FaUpload

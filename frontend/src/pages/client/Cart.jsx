@@ -105,6 +105,17 @@ const ProductAmountContainer = styled.div`
   margin-bottom: 20px;
 `;
 
+const CouponInput = styled.input`
+  border: none;
+  height: 30px;
+  border-bottom: 1px solid gray;
+`;
+
+const CouponButton = styled.button`
+  background-color: black;
+  color: white;
+  font-weight: 600;
+`;
 const ProductAmount = styled.div`
   font-size: 24px;
   margin: 5px;
@@ -126,7 +137,7 @@ const Summary = styled.div`
   border: 0.5px solid lightgray;
   border-radius: 10px;
   padding: 20px;
-  height: 50vh;
+  height: 6 0vh;
 `;
 
 const SummaryTitle = styled.h1`
@@ -236,6 +247,14 @@ const Cart = () => {
               <SummaryItemText>Descuento</SummaryItemText>
               <SummaryItemPrice>$ -3.90</SummaryItemPrice>
             </SummaryItem>
+            <SummaryItem>
+            <SummaryItemText style={{marginTop: '10px'}}>Cupon</SummaryItemText>
+                <CouponInput
+                  type="text"
+                  placeholder="Ingresa tu cupon"
+                />
+                <CouponButton>Aplicar</CouponButton>  
+                </SummaryItem>            
             <SummaryItem type="total">
               <SummaryItemText>Total</SummaryItemText>
               <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>

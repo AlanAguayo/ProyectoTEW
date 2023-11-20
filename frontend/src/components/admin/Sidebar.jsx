@@ -4,12 +4,8 @@ import {
   FaIdCard,
   FaStore,
   FaMoneyBillAlt,
-  FaChartBar,
-  FaEnvelope,
-  FaRss,
-  FaComment,
-  FaBriefcase,
-  FaFlag,
+  FaShoppingBag,
+  FaCreditCard
 } from 'react-icons/fa';
 
 import { Link } from "react-router-dom";
@@ -71,31 +67,14 @@ export default function Sidebar() {
     <Container>
       <SidebarWrapper>
         <SidebarMenu>
-          <SidebarTitle>Dashboard</SidebarTitle>
+          <SidebarTitle>Menu</SidebarTitle>
           <SidebarList>
-            <StyledLink to="/admin">
+             <StyledLink to="/admin">
             <SidebarListItem>
             <FaListAlt style={{ marginRight: '5px', fontSize: '20px !important' }} />
               Home
             </SidebarListItem>
             </StyledLink>
-            <StyledLink>
-            <SidebarListItem>
-              <FaChartLine style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Estadisticas
-            </SidebarListItem>
-            </StyledLink>
-            <StyledLink>
-            <SidebarListItem>
-              <FaChartLine style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Ventas
-            </SidebarListItem>
-            </StyledLink>
-          </SidebarList>
-        </SidebarMenu>
-        <SidebarMenu>
-          <SidebarTitle>Menu</SidebarTitle>
-          <SidebarList>
             <StyledLink to="/admin/users">
               <SidebarListItem>
                 <FaIdCard style={{ marginRight: '5px', fontSize: '20px !important' }} />
@@ -108,16 +87,28 @@ export default function Sidebar() {
                 Productos
               </SidebarListItem>
             </StyledLink>
-            <StyledLink>
+            <StyledLink to="/admin/orders">
             <SidebarListItem>
-              <FaMoneyBillAlt style={{ marginRight: '5px', fontSize: '20px !important' }} />
+              <FaListAlt style={{ marginRight: '5px', fontSize: '20px !important' }} />
               Ordenes
             </SidebarListItem>
             </StyledLink>
-            <StyledLink>
+            <StyledLink to="/admin/categories">
             <SidebarListItem>
-              <FaChartBar style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Reportes
+              <FaShoppingBag style={{ marginRight: '5px', fontSize: '20px !important' }} />
+              Categorias
+            </SidebarListItem>
+            </StyledLink>
+            <StyledLink to="/admin/coupons">
+            <SidebarListItem>
+              <FaMoneyBillAlt style={{ marginRight: '5px', fontSize: '20px !important' }} />
+              Cupones
+            </SidebarListItem>
+            </StyledLink>
+            <StyledLink to="/admin/paymethod">
+            <SidebarListItem>
+              <FaCreditCard style={{ marginRight: '5px', fontSize: '20px !important' }} />
+              Metodos de pago
             </SidebarListItem>
             </StyledLink>
           </SidebarList>

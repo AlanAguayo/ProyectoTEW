@@ -1,4 +1,4 @@
-import Chart from "../../components/admin/Chart";
+import Chart from "../../components/Chart";
 import FeaturedInfo from "../../components/admin/FeaturedInfo";
 import { userData } from "../../dummyData";
 import WidgetSm from "../../components/admin/WidgetSm";

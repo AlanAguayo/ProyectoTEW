@@ -5,11 +5,13 @@ import {
   FaUser,
   FaPhone,
   FaUpload,
-  FaCalendar
+  FaCalendar,
+  FaStore
 } from "react-icons/fa";
 import styled from "styled-components";
 import Navbar from "../../components/client/Navbar";
 import Announcement from "../../components/client/Announcement";
+import { Button } from "react-bootstrap";
 
 const User = styled.div`
   flex: 4;
@@ -199,6 +201,12 @@ export default function Profile() {
               <UserShowInfoTitle>Mexico | Celaya | Mi direccion</UserShowInfoTitle>
             </UserShowInfo>
           </UserShowBottom>
+          <FaStore/>
+          <UserShowInfoTitle to= "orders">
+            <Link to="/orders">
+            Historial de compras
+            </Link>
+          </UserShowInfoTitle>
         </UserShow>
         <UserUpdate>
           <UserUpdateTitle>Editar</UserUpdateTitle>
@@ -229,7 +237,21 @@ export default function Profile() {
                 <UserUpdateItemLabel>Direccion</UserUpdateItemLabel>
                 <UserUpdateInput
                   type="text"
-                  placeholder="Mexico | Celaya | Mi direccion"
+                  placeholder="Calle #000"
+                />
+              </UserUpdateItem>
+              <UserUpdateItem>
+                <UserUpdateItemLabel>Pais</UserUpdateItemLabel>
+                <UserUpdateInput
+                  type="text"
+                  placeholder="Mexico"
+                />
+              </UserUpdateItem>
+              <UserUpdateItem>
+                <UserUpdateItemLabel>Estado</UserUpdateItemLabel>
+                <UserUpdateInput
+                  type="text"
+                  placeholder="Guanajuato"
                 />
               </UserUpdateItem>
             </div>
