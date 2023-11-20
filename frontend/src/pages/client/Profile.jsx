@@ -8,6 +8,8 @@ import {
   FaCalendar
 } from "react-icons/fa";
 import styled from "styled-components";
+import Navbar from "../../components/client/Navbar";
+import Announcement from "../../components/client/Announcement";
 
 const User = styled.div`
   flex: 4;
@@ -158,12 +160,12 @@ const UserUpdateButton = styled.button`
 
 export default function Profile() {
   return (
+    <>
+    <Navbar />
+      <Announcement />
     <User>
       <UserTitleContainer>
         <h1>Perfil</h1>
-        <Link to="/newUser">
-          <UserAddButton>Create</UserAddButton>
-        </Link>
       </UserTitleContainer>
       <UserContainer>
         <UserShow>
@@ -173,75 +175,61 @@ export default function Profile() {
               alt=""
             />
             <UserShowTopTitle>
-              <UserShowUsername>Anna Becker</UserShowUsername>
-              <UserShowUserTitle>Software Engineer</UserShowUserTitle>
+              <UserShowUsername>Alan Aguayo</UserShowUsername>
+              <UserShowUserTitle>Usuario</UserShowUserTitle>
             </UserShowTopTitle>
           </UserShowTop>
           <UserShowBottom>
-            <UserShowTitle>Account Details</UserShowTitle>
+            <UserShowTitle>Informacion de la cuenta</UserShowTitle>
             <UserShowInfo>
               <FaUser/>
-              <UserShowInfoTitle>annabeck99</UserShowInfoTitle>
+              <UserShowInfoTitle>19030034@itcelaya.edu.mx</UserShowInfoTitle>
             </UserShowInfo>
             <UserShowInfo>
              <FaCalendar/> 
-              <UserShowInfoTitle>10.12.1999</UserShowInfoTitle>
+              <UserShowInfoTitle>31/10/2000</UserShowInfoTitle>
             </UserShowInfo>
-            <UserShowInfoTitle>Contact Details</UserShowInfoTitle>
+            <UserShowInfoTitle>Informacion de contacto</UserShowInfoTitle>
             <UserShowInfo>
               <FaPhone/>
-              <UserShowInfoTitle>+1 123 456 67</UserShowInfoTitle>
-            </UserShowInfo>
-            <UserShowInfo>
-              <FaMailBulk/>
-              <UserShowInfoTitle>annabeck99@gmail.com</UserShowInfoTitle>
+              <UserShowInfoTitle>+52 123 123 1212</UserShowInfoTitle>
             </UserShowInfo>
             <UserShowInfo>
               <FaLocationArrow/>
-              <UserShowInfoTitle>New York | USA</UserShowInfoTitle>
+              <UserShowInfoTitle>Mexico | Celaya | Mi direccion</UserShowInfoTitle>
             </UserShowInfo>
           </UserShowBottom>
         </UserShow>
         <UserUpdate>
-          <UserUpdateTitle>Edit</UserUpdateTitle>
+          <UserUpdateTitle>Editar</UserUpdateTitle>
           <UserUpdateForm>
             <div>
               <UserUpdateItem>
-                <UserUpdateItemLabel>Username</UserUpdateItemLabel>
+                <UserUpdateItemLabel>Correo</UserUpdateItemLabel>
                 <UserUpdateInput
                   type="text"
-                  placeholder="annabeck99"
+                  placeholder="19030034@itcelaya.edu.mx"
                 />
               </UserUpdateItem>
               <UserUpdateItem>
-                <UserUpdateItemLabel>Full Name</UserUpdateItemLabel>
+                <UserUpdateItemLabel>Nombre</UserUpdateItemLabel>
                 <UserUpdateInput
                   type="text"
-                  placeholder="Anna Becker"
+                  placeholder="Alan Aguayo"
                 />
               </UserUpdateItem>
               <UserUpdateItem>
-                <UserUpdateItemLabel>Email</UserUpdateItemLabel>
+                <UserUpdateItemLabel>Telefono</UserUpdateItemLabel>
                 <UserUpdateInput
                   type="text"
-                  placeholder="annabeck99@gmail.com"
-                  className="userUpdateInput"
+                  placeholder="+52 123 123 1212"
                 />
               </UserUpdateItem>
               <UserUpdateItem>
-                <UserUpdateItemLabel>Phone</UserUpdateItemLabel>
+                <UserUpdateItemLabel>Direccion</UserUpdateItemLabel>
                 <UserUpdateInput
                   type="text"
-                  placeholder="+1 123 456 67"
-                  className="userUpdateInput"
-                />
-              </UserUpdateItem>
-              <UserUpdateItem>
-                <UserUpdateItemLabel>Address</UserUpdateItemLabel>
-                <UserUpdateInput
-                  type="text"
-                  placeholder="New York | USA"
-                  className="userUpdateInput"
+                  placeholder="Mexico | Celaya | Mi direccion"
                 />
               </UserUpdateItem>
             </div>
@@ -262,5 +250,6 @@ export default function Profile() {
         </UserUpdate>
       </UserContainer>
     </User>
+    </>
   );
 }

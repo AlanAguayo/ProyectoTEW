@@ -56,19 +56,17 @@ const Register = () => {
   return (
     <Container>
       <Wrapper>
-        <Title>CREATE AN ACCOUNT</Title>
+        <Title>Crea una cuenta</Title>
         <Form>
-          <Input placeholder="name" />
-          <Input placeholder="last name" />
-          <Input placeholder="username" />
-          <Input placeholder="email" />
-          <Input placeholder="password" />
-          <Input placeholder="confirm password" />
+          <Input placeholder="Nombre" />
+          <Input placeholder="Apellido" />
+          <Input placeholder="Correo" />
+          <Input placeholder="Contraseña" />
+          <Input placeholder="Confirmar contraseña" />
           <Agreement>
-            By creating an account, I consent to the processing of my personal
-            data in accordance with the <b>PRIVACY POLICY</b>
+            Creando una cuenta de lincestore aceptas los <b>terminos y condiciones</b>
           </Agreement>
-          <Button>CREATE</Button>
+          <Button >CREATE</Button>
         </Form>
       </Wrapper>
     </Container>

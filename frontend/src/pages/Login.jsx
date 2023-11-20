@@ -94,7 +94,7 @@ const Login = () => {
           <Button onClick={handleClick} disabled={isFetching}>
             Iniciar sesion
           </Button>
-          {error && <Error>Hubo un error...</Error>}
+          {error && <Error>Llena todos los datos.</Error>}
           <Link>Crear una cuenta</Link>
         </Form>
       </Wrapper>

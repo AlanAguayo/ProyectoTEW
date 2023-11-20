@@ -84,13 +84,13 @@ export default function WidgetLg() {
   };
   return (
     <Container>
-      <WidgetLgTitle>Latest transactions</WidgetLgTitle>
+      <WidgetLgTitle>Transacciones</WidgetLgTitle>
       <WidgetLgTable>
         <tr>
-          <WidgetLgTh>Customer</WidgetLgTh>
-          <WidgetLgTh>Date</WidgetLgTh>
-          <WidgetLgTh>Amount</WidgetLgTh>
-          <WidgetLgTh>Status</WidgetLgTh>
+          <WidgetLgTh>Usuario</WidgetLgTh>
+          <WidgetLgTh>Fecha</WidgetLgTh>
+          <WidgetLgTh>Cantidad</WidgetLgTh>
+          <WidgetLgTh>Estado</WidgetLgTh>
         </tr>
         {orders.map((order) => (
           <tr key={order._id}>

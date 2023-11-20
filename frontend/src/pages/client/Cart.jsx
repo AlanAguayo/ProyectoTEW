@@ -1,4 +1,4 @@
-import { FaPlus , FaMinus } from "react-icons/fa";
+import { FaPlus , FaMinus, FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Announcement from "../../components/client/Announcement";
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { userRequest } from "../../requestMethods";
 import { useNavigate } from "react-router-dom";
 
-const KEY = process.env.REACT_APP_STRIPE;
+const KEY = "pk_test_51OCoZuDUnbodT6MUcaAYA4vkMIDwLCZglQXOMke3TVs4XNgBSwlorUlX9jOdBP20reowO3kEqYmJ2cTQWc1YsLAM00G7vneRLS";
 
 const Container = styled.div``;
 
@@ -141,6 +141,12 @@ const SummaryItem = styled.div`
   font-size: ${(props) => props.type === "total" && "24px"};
 `;
 
+const DeleteIcon = styled(FaTrash)`
+  cursor: pointer;
+  margin-right: 10px;
+  margin-top: 50px;
+`;
+
 const SummaryItemText = styled.span``;
 
 const SummaryItemPrice = styled.span``;
@@ -181,15 +187,8 @@ const Cart = () => {
       <Navbar />
       <Announcement />
       <Wrapper>
-        <Title>YOUR BAG</Title>
-        <Top>
-          <TopButton>CONTINUE SHOPPING</TopButton>
-          <TopTexts>
-            <TopText>Shopping Bag(2)</TopText>
-            <TopText>Your Wishlist (0)</TopText>
-          </TopTexts>
-          <TopButton type="filled">CHECKOUT NOW</TopButton>
-        </Top>
+        <Title>Carrito</Title>
+        <Top/>
         <Bottom>
           <Info>
             {cart.products.map((product) => (
@@ -198,14 +197,13 @@ const Cart = () => {
                   <Image src={product.img} />
                   <Details>
                     <ProductName>
-                      <b>Product:</b> {product.title}
+                      <b>Producto:</b> {product.name}
                     </ProductName>
-                    <ProductId>
-                      <b>ID:</b> {product._id}
-                    </ProductId>
-                    <ProductColor color={product.color} />
+                    <ProductColor color={product.color}>
+                      <b>Color:</b>  {product.color}
+                    </ProductColor>
                     <ProductSize>
-                      <b>Size:</b> {product.size}
+                      <b>Tamaño:</b> {product.size}
                     </ProductSize>
                   </Details>
                 </ProductDetail>
@@ -219,39 +217,39 @@ const Cart = () => {
                     $ {product.price * product.quantity}
                   </ProductPrice>
                 </PriceDetail>
+                <DeleteIcon/>
               </Product>
             ))}
             <Hr />
           </Info>
           <Summary>
-            <SummaryTitle>ORDER SUMMARY</SummaryTitle>
+            <SummaryTitle>Orden</SummaryTitle>
             <SummaryItem>
               <SummaryItemText>Subtotal</SummaryItemText>
               <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
-              <SummaryItemText>Estimated Shipping</SummaryItemText>
-              <SummaryItemPrice>$ 5.90</SummaryItemPrice>
+              <SummaryItemText>Envio</SummaryItemText>
+              <SummaryItemPrice>$ 1.90</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
-              <SummaryItemText>Shipping Discount</SummaryItemText>
-              <SummaryItemPrice>$ -5.90</SummaryItemPrice>
+              <SummaryItemText>Descuento</SummaryItemText>
+              <SummaryItemPrice>$ -3.90</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Total</SummaryItemText>
               <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
             <StripeCheckout
-              name="Lama Shop"
-              image="https://avatars.githubusercontent.com/u/1486366?v=4"
+              name="Lincestore"
               billingAddress
               shippingAddress
-              description={`Your total is $${cart.total}`}
+              description={`Total a pagar: $${cart.total}`}
               amount={cart.total * 100}
               token={onToken}
               stripeKey={KEY}
             >
-              <Button>CHECKOUT NOW</Button>
+              <Button>Comprar ahora</Button>
             </StripeCheckout>
           </Summary>
         </Bottom>

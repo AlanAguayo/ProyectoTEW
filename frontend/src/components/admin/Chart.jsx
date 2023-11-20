@@ -24,7 +24,7 @@ export default function Chart({ title, data, dataKey, grid }) {
   return (
     <Container>
       <ChartTitle>{title}</ChartTitle>
-      <ResponsiveContainer width="100%" aspect={4 / 1}>
+      <ResponsiveContainer width={1000} height={250} aspect={4 / 1}>
         <LineChart data={data}>
           <XAxis dataKey="name" stroke="#5550bd" />
           <Line type="monotone" dataKey={dataKey} stroke="#5550bd" />

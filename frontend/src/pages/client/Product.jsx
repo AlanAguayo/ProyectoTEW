@@ -1,14 +1,13 @@
 import { FaPlus , FaMinus } from "react-icons/fa";
 import styled from "styled-components";
-import Announcement from "../../components/client/Announcement";
 import Footer from "../../components/client/Footer";
 import Navbar from "../../components/client/Navbar";
-import Newsletter from "../../components/client/Recomendation";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { publicRequest } from "../../requestMethods";
 import { addProduct } from "../../redux/cartRedux";
 import { useDispatch } from "react-redux";
+import Announcement from "../../components/client/Announcement";
 
 const Container = styled.div``;
 
@@ -77,6 +76,8 @@ const FilterSize = styled.select`
 `;
 
 const FilterSizeOption = styled.option``;
+
+const FilterColorOption = styled.option``;
 
 const AddContainer = styled.div`
   width: 50%;
@@ -148,8 +149,8 @@ const Product = () => {
   };
   return (
     <Container>
+      <Announcement/>
       <Navbar />
-      <Announcement />
       <Wrapper>
         <ImgContainer>
           <Image src={product.img} />
@@ -161,12 +162,17 @@ const Product = () => {
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
+              <FilterColor onChange={(e) => setColor(e.target.value)}>
               {product.color?.map((c) => (
-                <FilterColor color={c} key={c} onClick={() => setColor(c)} />
+                <FilterColorOption color={c} key={c} onClick={() => setColor(c)}>
+                  {c}
+                </FilterColorOption>
+                
               ))}
+              </FilterColor>
             </Filter>
             <Filter>
-              <FilterTitle>Size</FilterTitle>
+              <FilterTitle>Tamaño</FilterTitle>
               <FilterSize onChange={(e) => setSize(e.target.value)}>
                 {product.size?.map((s) => (
                   <FilterSizeOption key={s}>{s}</FilterSizeOption>
@@ -180,11 +186,10 @@ const Product = () => {
               <Amount>{quantity}</Amount>
               <FaPlus onClick={() => handleQuantity("inc")} />
             </AmountContainer>
-            <Button onClick={handleClick}>ADD TO CART</Button>
+            <Button onClick={handleClick}>AGREGAR AL CARRITO</Button>
           </AddContainer>
         </InfoContainer>
       </Wrapper>
-      <Newsletter />
       <Footer />
     </Container>
   );

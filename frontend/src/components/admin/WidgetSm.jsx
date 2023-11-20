@@ -2,6 +2,7 @@ import { FaEye } from 'react-icons/fa';
 import { useEffect, useState } from "react";
 import { userRequest } from "../../requestMethods";
 import styled from "styled-components";
+import { userRows } from "../../dummyData";
 
 const Container = styled.div`
 flex: 1;
@@ -45,10 +46,6 @@ const WidgetSmUsername = styled.span`
 font-weight: 600;
 `;
 
-const WidgetSmUserTitle = styled.div`
-font-weight: 300;
-`;
-
 const WidgetSmButton = styled.button`
 display: flex;
   align-items: center;
@@ -61,7 +58,7 @@ display: flex;
 `;
 
 export default function WidgetSm() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(userRows);
 
   useEffect(() => {
     const getUsers = async () => {
@@ -75,7 +72,7 @@ export default function WidgetSm() {
   
   return (
     <Container>
-      <WidgetSmTitle>New Join Members</WidgetSmTitle>
+      <WidgetSmTitle>Nuevos usuairos</WidgetSmTitle>
       <WidgetSmList>
         {users.map((user) => (
           <WidgetSmListItem key={user._id}>
@@ -89,10 +86,7 @@ export default function WidgetSm() {
             <WidgetSmUser>
               <WidgetSmUsername>{user.username}</WidgetSmUsername>
             </WidgetSmUser>
-            <WidgetSmButton className="widgetSmButton">
-            <FaEye style={{ fontSize: '16px', marginRight: '5px' }} />
-              Display
-            </WidgetSmButton>
+            <div/>
           </WidgetSmListItem>
         ))}
       </WidgetSmList>
