@@ -1,16 +1,11 @@
 import {
   FaListAlt,
-  FaTimeline,
   FaChartLine,
   FaIdCard,
   FaStore,
   FaMoneyBillAlt,
-  FaChartBar,
-  FaEnvelope,
-  FaRss,
-  FaCommentAltOutline,
-  FaBriefcase,
-  FaFlag,
+  FaShoppingBag,
+  FaCreditCard
 } from 'react-icons/fa';
 
 import { Link } from "react-router-dom";
@@ -57,86 +52,65 @@ padding: 5px;
   }
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    text-decoration: none;
+    color: inherit;
+  }
+`;
+
 export default function Sidebar() {
   return (
     <Container>
       <SidebarWrapper>
         <SidebarMenu>
-          <SidebarTitle>Dashboard</SidebarTitle>
+          <SidebarTitle>Menu</SidebarTitle>
           <SidebarList>
-            <Link to="/" className="link">
+             <StyledLink to="/admin">
             <SidebarListItem>
             <FaListAlt style={{ marginRight: '5px', fontSize: '20px !important' }} />
               Home
             </SidebarListItem>
-            </Link>
-            <SidebarListItem>
-              <FaTimeline style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Analytics
-            </SidebarListItem>
-            <SidebarListItem>
-              <FaChartLine style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Sales
-            </SidebarListItem>
-          </SidebarList>
-        </SidebarMenu>
-        <SidebarMenu>
-          <SidebarTitle>Quick Menu</SidebarTitle>
-          <SidebarList>
-            <Link to="/users">
+            </StyledLink>
+            <StyledLink to="/admin/users">
               <SidebarListItem>
                 <FaIdCard style={{ marginRight: '5px', fontSize: '20px !important' }} />
-                Users
+                Usuarios
               </SidebarListItem>
-            </Link>
-            <Link to="/products">
+            </StyledLink>
+            <StyledLink to="/admin/products">
               <SidebarListItem>
                 <FaStore style={{ marginRight: '5px', fontSize: '20px !important' }} />
-                Products
+                Productos
               </SidebarListItem>
-            </Link>
+            </StyledLink>
+            <StyledLink to="/admin/orders">
+            <SidebarListItem>
+              <FaListAlt style={{ marginRight: '5px', fontSize: '20px !important' }} />
+              Ordenes
+            </SidebarListItem>
+            </StyledLink>
+            <StyledLink to="/admin/categories">
+            <SidebarListItem>
+              <FaShoppingBag style={{ marginRight: '5px', fontSize: '20px !important' }} />
+              Categorias
+            </SidebarListItem>
+            </StyledLink>
+            <StyledLink to="/admin/coupons">
             <SidebarListItem>
               <FaMoneyBillAlt style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Transactions
+              Cupones
             </SidebarListItem>
+            </StyledLink>
+            <StyledLink to="/admin/paymethod">
             <SidebarListItem>
-              <FaChartBar style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Reports
+              <FaCreditCard style={{ marginRight: '5px', fontSize: '20px !important' }} />
+              Metodos de pago
             </SidebarListItem>
-          </SidebarList>
-        </SidebarMenu>
-        <SidebarMenu>
-          <SidebarTitle>Notifications</SidebarTitle>
-          <SidebarList>
-            <SidebarListItem>
-              <FaEnvelope style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Mail
-            </SidebarListItem>
-            <SidebarListItem>
-              <FaRss style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Feedback
-            </SidebarListItem>
-            <SidebarListItem>
-              <FaCommentAltOutline style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Messages
-            </SidebarListItem>
-          </SidebarList>
-        </SidebarMenu>
-        <SidebarMenu>
-          <SidebarTitle>Staff</SidebarTitle>
-          <SidebarList>
-            <SidebarListItem>
-              <FaBriefcase style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Manage
-            </SidebarListItem>
-            <SidebarListItem>
-              <FaTimeline style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Analytics
-            </SidebarListItem>
-            <SidebarListItem>
-              <FaFlag style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Reports
-            </SidebarListItem>
+            </StyledLink>
           </SidebarList>
         </SidebarMenu>
       </SidebarWrapper>

@@ -1,5 +1,5 @@
 import {
-  FaSearch, 
+  FaSearch,
   FaShoppingCart
 } from "react-icons/fa";
 import React from "react";
@@ -75,31 +75,49 @@ const MenuItem = styled.div`
   margin-left: 25px;
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    text-decoration: none;
+    color: inherit;
+  }
+`;
+
 const Navbar = () => {
-  const quantity = useSelector(state=>state.cart.quantity)
+  const quantity = useSelector(state => state.cart.quantity)
   return (
     <Container>
       <Wrapper>
         <Left>
-          <LogoMini>Lincestore</LogoMini>
+          <StyledLink to="/">
+            <LogoMini>Lincestore</LogoMini>
+          </StyledLink>          
           <SearchContainer>
             <Input placeholder="Buscar" />
             <FaSearch style={{ color: "gray", fontSize: 16 }} />
           </SearchContainer>
         </Left>
         <Center>
+          <StyledLink to="/">
           <Logo>Lincestore</Logo>
+          </StyledLink>
         </Center>
         <Right>
+        <StyledLink to="/register">
           <MenuItem>Registrarse</MenuItem>
+        </StyledLink>
+        <StyledLink to="/login">
           <MenuItem>Iniciar sesion</MenuItem>
+          </StyledLink>
           <Link to="/cart">
-          <MenuItem>
-            <div style={{ marginTop: '12px' }}>
-              <FaShoppingCart />
-              <Badge>{quantity===0?"":quantity}</Badge>
-            </div>
-          </MenuItem>
+            <MenuItem>
+              <div style={{ marginTop: '12px' }}>
+                <FaShoppingCart />
+                <Badge>{quantity === 0 ? "" : quantity}</Badge>
+              </div>
+            </MenuItem>
           </Link>
         </Right>
       </Wrapper>

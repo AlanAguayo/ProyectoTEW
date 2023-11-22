@@ -5,13 +5,18 @@ import Register from "./pages/client/Register";
 import Login from "./pages/Login";
 import Cart from "./pages/client/Cart";
 import Success from "./pages/client/Success";
-import AdminHome from "./pages/admin/home/Home"
-import AdminNewProduct from "./pages/admin/newProduct/NewProduct"
-import AdminNewUser from "./pages/admin/newUser/NewUser"
-import AdminProduct from "./pages/admin/product/Product"
-import AdminProductList from "./pages/admin/productList/ProductList"
+import AdminHome from "./pages/admin/Home"
+import AdminNewProduct from "./pages/admin/NewProduct"
+import AdminNewUser from "./pages/admin/NewUser"
+import AdminProduct from "./pages/admin/Product"
+import AdminProductList from "./pages/admin/ProductList"
 import Profile from "./pages/client/Profile"
-import AdminUserList from "./pages/admin/userList/UserList"
+import AdminUserList from "./pages/admin/UserList"
+import OrderList from "./pages/client/OrderList"
+import AdminOrderList from "./pages/admin/OrderList"
+import AdminCategories from "./pages/admin/Categories"
+import AdminCoupons from "./pages/admin/Coupons"
+import AdminPayMethod from "./pages/admin/PayMethod"
 
 import {
   BrowserRouter,
@@ -31,12 +36,17 @@ const App = () => {
         <Route path="/register" element={<Register />}/>
         <Route path="/success" element={<Success />}/>
         <Route path="/profile" element={<Profile />}/>
+        <Route path="/orders" element={<OrderList />}/>
         <Route path="/admin" element={<AdminHome />}/>
-        <Route path="/admin/newProduct" element={<AdminNewProduct />}/>
-        <Route path="/admin/newUser" element={<AdminNewUser />}/>
+        <Route path="/admin/products/new" element={<AdminNewProduct />}/>
+        <Route path="/admin/users/new" element={<AdminNewUser />}/>
         <Route path="/admin/product/:id" element={<AdminProduct />}/>
-        <Route path="/admin/productList" element={<AdminProductList />}/>
-        <Route path="/admin/userList" element={<AdminUserList />}/>
+        <Route path="/admin/products" element={<AdminProductList />}/>
+        <Route path="/admin/users" element={<AdminUserList />}/>
+        <Route path="/admin/orders" element={<AdminOrderList />}/>
+        <Route path="/admin/categories" element={<AdminCategories />}/>
+        <Route path="/admin/coupons" element={<AdminCoupons />}/>
+        <Route path="/admin/paymethod" element={<AdminPayMethod />}/>
     </Routes>
     </BrowserRouter>
   );

@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -58,11 +59,20 @@ const List = styled.ul`
   list-style: none;
   display: flex;
   flex-wrap: wrap;
+  
 `;
 
-const ListItem = styled.li`
+const ListItem = styled(Link)`
   width: 50%;
   margin-bottom: 10px;
+
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    text-decoration: none;
+    color: inherit;
+  }
 `;
 
 const Right = styled.div`
@@ -104,15 +114,13 @@ const Footer = () => {
         </SocialContainer>
       </Left>
       <Center>
-        <Title>Useful Links</Title>
+        <Title>Paginas</Title>
         <List>
-          <ListItem>Home</ListItem>
-          <ListItem>Carrito</ListItem>
-          <ListItem>Productos</ListItem>
-          <ListItem>Mi cuenta</ListItem>
-          <ListItem>Ordenes</ListItem>
-          <ListItem>Lista de deseos</ListItem>
-          <ListItem>Terminos y condiciones</ListItem>
+          <ListItem to="/">Home</ListItem>
+          <ListItem to="/cart">Carrito</ListItem>
+          <ListItem to="/products/0">Productos</ListItem>
+          <ListItem to="/register">Registrarse</ListItem>
+          <ListItem to="/login">Iniciar sesion</ListItem>
         </List>
       </Center>
       <Right>

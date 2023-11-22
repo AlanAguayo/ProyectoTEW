@@ -63,7 +63,7 @@ export default function FeaturedInfo() {
   return (
     <Featured>
       <FeaturedItem>
-        <FeaturedTitle>Revanue</FeaturedTitle>
+        <FeaturedTitle>Ganancias</FeaturedTitle>
         <FeaturedMoneyContainer>
           <FeaturedMoney>${income[1]?.total}</FeaturedMoney>
           <FeaturedMoneyRate>
@@ -75,27 +75,27 @@ export default function FeaturedInfo() {
             )}
           </FeaturedMoneyRate>
         </FeaturedMoneyContainer>
-        <FeaturedSub>Compared to last month</FeaturedSub>
+        <FeaturedSub>Comparado al mes pasado</FeaturedSub>
       </FeaturedItem>
       <FeaturedItem>
-        <FeaturedTitle>Sales</FeaturedTitle>
+        <FeaturedTitle>Ventas</FeaturedTitle>
         <FeaturedMoneyContainer>
-          <FeaturedMoney>$4,415</FeaturedMoney>
+          <FeaturedMoney>$0</FeaturedMoney>
           <FeaturedMoneyRate>
             -1.4 <FaArrowLeft style={{fontSize: '14px', marginLeft: '5px', color: 'red'}}/>
           </FeaturedMoneyRate>
         </FeaturedMoneyContainer>
-        <FeaturedSub>Compared to last month</FeaturedSub>
+        <FeaturedSub>Comparado al mes pasado</FeaturedSub>
       </FeaturedItem>
       <FeaturedItem>
-        <FeaturedTitle>Cost</FeaturedTitle>
+        <FeaturedTitle>Gastos</FeaturedTitle>
         <FeaturedMoneyContainer>
-          <FeaturedMoney>$2,225</FeaturedMoney>
+          <FeaturedMoney>$0</FeaturedMoney>
           <FeaturedMoneyRate>
-            +2.4 <FaArrowRight style={{ fontSize: '14px', marginLeft: '5px', color: 'green' }} />
+            $0 <FaArrowRight style={{ fontSize: '14px', marginLeft: '5px', color: 'green' }} />
           </FeaturedMoneyRate>
         </FeaturedMoneyContainer>
-        <FeaturedSub>Compared to last month</FeaturedSub>
+        <FeaturedSub>Comparado por mes</FeaturedSub>
       </FeaturedItem>
     </Featured>
   );
