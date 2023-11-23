@@ -37,11 +37,6 @@ const Left = styled.div`
   align-items: center;
 `;
 
-const LogoMini = styled.span`
-  font-size: 14px;
-  cursor: pointer;
-`;
-
 const SearchContainer = styled.div`
   border: 0.5px solid lightgray;
   display: flex;
@@ -90,10 +85,7 @@ const Navbar = () => {
   return (
     <Container>
       <Wrapper>
-        <Left>
-          <StyledLink to="/">
-            <LogoMini>Lincestore</LogoMini>
-          </StyledLink>          
+        <Left>       
           <SearchContainer>
             <Input placeholder="Buscar" />
             <FaSearch style={{ color: "gray", fontSize: 16 }} />
