@@ -11,12 +11,8 @@ const cartRoute = require("./routes/CartRoutes");
 const orderRoute = require("./routes/OrderRoutes");
 const stripeRoute = require("./routes/StripeRoutes");
 const couponRoute = require("./routes/CouponRoutes");
-<<<<<<< HEAD
 const sliderRoute = require("./routes/SliderRoutes");
 //const authJwt = require('./libs/jwt');
-=======
-const authJwt = require('./libs/jwt');
->>>>>>> 63edb316a16c92da144d8dfe32072f45f6173143
 
 app.use(authJwt()) 
 const cors = require("cors");
