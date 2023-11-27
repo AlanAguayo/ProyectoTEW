@@ -11,6 +11,7 @@ const cartRoute = require("./routes/CartRoutes");
 const orderRoute = require("./routes/OrderRoutes");
 const stripeRoute = require("./routes/StripeRoutes");
 const couponRoute = require("./routes/CouponRoutes");
+const sliderRoute = require("./routes/SliderRoutes");
 //const authJwt = require('./libs/jwt');
 
 
@@ -38,6 +39,7 @@ app.use("/api/carts", cartRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/checkout", stripeRoute);
 app.use("/api/coupons", couponRoute);
+app.use("/api/slider", sliderRoute);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log("Backend server is running!");

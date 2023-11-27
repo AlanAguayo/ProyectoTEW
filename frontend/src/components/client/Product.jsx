@@ -28,6 +28,7 @@ const Container = styled.div`
   min-width: 280px;
   height: 350px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #f5fbfd;
@@ -67,11 +68,18 @@ const Icon = styled.div`
   }
 `;
 
+const Name = styled.div`
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+`;
+
 const Product = ({ item }) => {
   return (
     <Container>
       <Circle />
-      <Image src={item.img} />
+      <Image src={item.image} />
+      <Name>{item.name}</Name>
       <Info>
         <Icon>
           <FaShoppingCart />

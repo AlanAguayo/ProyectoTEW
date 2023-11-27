@@ -1,7 +1,8 @@
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useState } from "react";
 import styled from "styled-components";
 import { sliderItems } from "../../data";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const Container = styled.div`
   width: 100%;
@@ -78,7 +79,22 @@ const Button = styled.button`
 `;
 
 const Slider = () => {
+  const [sliderItems, setSliderItems] = useState([]);
   const [slideIndex, setSlideIndex] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/slider");
+        setSliderItems(response.data);
+      } catch (error) {
+        console.error("Error fetching slider data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  
   const handleClick = (direction) => {
     if (direction === "left") {
       setSlideIndex(slideIndex > 0 ? slideIndex - 1 : 2);
@@ -96,7 +112,7 @@ const Slider = () => {
         {sliderItems.map((item) => (
           <Slide bg={item.bg} key={item.id}>
             <ImgContainer>
-              <Image src={item.img} />
+              <Image src={"https://proyectotew.s3.us-east-1.amazonaws.com/slider/"+item.img} />
             </ImgContainer>
             <InfoContainer>
               <Title>{item.title}</Title>
