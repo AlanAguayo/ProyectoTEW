@@ -1,9 +1,13 @@
 const User = require("../models/UserModel");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
+const validator = require('validator');
 
 //REGISTER
 const register = async (req, res) => {
+  if (!validator.isEmail(req.body.email)) {
+    return res.status(400).json({ error: 'Correo electrónico no válido' });
+  }
   const newUser = new User({
     name: req.body.name,
     email: req.body.email,
@@ -28,6 +32,9 @@ const register = async (req, res) => {
 
 const login =  async (req, res) => {
   try {
+    if (!validator.isEmail(req.body.email)) {
+      return res.status(400).json({ error: 'Correo electrónico no válido' });
+    }
     const user = await User.findOne({ email: req.body.email });
     !user && res.status(401).json("Wrong credentials!");
 
@@ -44,7 +51,7 @@ const login =  async (req, res) => {
       {
         id: user._id,
         isAdmin: user.isAdmin,
-        permissions:["user:read","user:write"]
+        //permissions:["user:read","user:write"]
       },
 
       process.env.JWT_SEC,
