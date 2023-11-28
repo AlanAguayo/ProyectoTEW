@@ -11,7 +11,7 @@ import {
 import styled from "styled-components";
 import Navbar from "../../components/client/Navbar";
 import Announcement from "../../components/client/Announcement";
-import { Button } from "react-bootstrap";
+//import { Button } from "react-bootstrap";
 
 const User = styled.div`
   flex: 4;

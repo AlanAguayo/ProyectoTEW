@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -53,20 +54,90 @@ const Button = styled.button`
 `;
 
 const Register = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    isAdmin: false,
+    img: "https://publicdomainvectors.org/photos/abstract-user-flat-4.png"
+  });
+
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (formData.password !== confirmPassword) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        console.log("Registro exitoso");
+      } else {
+        setError("Error en el registro");
+      }
+    } catch (error) {
+      setError("Error en la solicitud:" + error.message);
+    }
+  };
+
   return (
     <Container>
       <Wrapper>
         <Title>Crea una cuenta</Title>
-        <Form>
-          <Input placeholder="Nombre" />
-          <Input placeholder="Apellido" />
-          <Input placeholder="Correo" />
-          <Input placeholder="Contraseña" />
-          <Input placeholder="Confirmar contraseña" />
+        <Form onSubmit={handleSubmit}>
+        <Input
+            placeholder="Nombre completo"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            placeholder="Correo"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            placeholder="Contraseña"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            placeholder="Confirmar contraseña"
+            type="password"
+            name="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
           <Agreement>
-            Creando una cuenta de lincestore aceptas los <b>terminos y condiciones</b>
+            Creando una cuenta de lincestore aceptas los{" "}
+            <b>terminos y condiciones</b>
           </Agreement>
-          <Button >CREATE</Button>
+          <Button type="submit">Registrarse</Button>
+          {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
         </Form>
       </Wrapper>
     </Container>

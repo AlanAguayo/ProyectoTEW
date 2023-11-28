@@ -6,7 +6,6 @@ conn.open();
 
 const User = require("../models/UserModel");
 
-
 //UPDATE
 const update = ( async (req, res) => {
   if (req.body.password) {

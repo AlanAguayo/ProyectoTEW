@@ -12,10 +12,11 @@ const orderRoute = require("./routes/OrderRoutes");
 const stripeRoute = require("./routes/StripeRoutes");
 const couponRoute = require("./routes/CouponRoutes");
 const sliderRoute = require("./routes/SliderRoutes");
-//const authJwt = require('./libs/jwt');
+const authJwt = require('./libs/jwt');
 
-app.use(authJwt()) 
 const cors = require("cors");
+app.use(cors());
+app.use(authJwt()) 
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -24,8 +25,6 @@ mongoose
     console.log(err);
   });
 
-
-app.use(cors());
 app.use(express.json());
 app.use("/api/categories", categoryRoute);
 app.use("/api/auth", authRoute);
