@@ -17,6 +17,7 @@ import AdminOrderList from "./pages/admin/OrderList"
 import AdminCategories from "./pages/admin/Categories"
 import AdminCoupons from "./pages/admin/Coupons"
 import AdminPayMethod from "./pages/admin/PayMethod"
+import LogOut from "./pages/LogOut";
 
 import {
   BrowserRouter,
@@ -29,6 +30,7 @@ const App = () => {
     <BrowserRouter>
     <Routes>
         <Route path="/login" element={<Login />}/>
+        <Route path="/logout" element={<LogOut />}/>
         <Route path="/cart" element={<Cart />}/>
         <Route path="/" element={<Home />} />
         <Route path="/product/:id" element={<Product />}/>

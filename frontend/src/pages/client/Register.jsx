@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   width: 100vw;
@@ -54,6 +55,8 @@ const Button = styled.button`
 `;
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -88,6 +91,7 @@ const Register = () => {
 
       if (response.ok) {
         console.log("Registro exitoso");
+        navigate('/login');
       } else {
         setError("Error en el registro");
       }

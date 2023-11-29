@@ -1,17 +1,16 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { login } from "../redux/apiCalls";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
   background: linear-gradient(
-      rgba(255, 255, 255, 0.5),
-      rgba(255, 255, 255, 0.5)
-    ),
-    url("https://png.pngtree.com/thumb_back/fh260/background/20210207/pngtree-gray-solid-color-simple-background-image_557028.jpg")
-      center;
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0.5)
+  ),
+  url("https://png.pngtree.com/thumb_back/fh260/background/20210207/pngtree-gray-solid-color-simple-background-image_557028.jpg")
+  center;
   background-size: cover;
   display: flex;
   align-items: center;
@@ -19,7 +18,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  width: 25%;
+  width: 40%;
   padding: 20px;
   background-color: white;
 `;
@@ -31,14 +30,22 @@ const Title = styled.h1`
 
 const Form = styled.form`
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
 `;
 
 const Input = styled.input`
   flex: 1;
   min-width: 40%;
-  margin: 10px 0;
+  margin: 20px 10px 10px 0px;
   padding: 10px;
+`;
+
+const Link = styled.a`
+  margin: 15px 0px;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+  color: blue;
 `;
 
 const Button = styled.button`
@@ -48,54 +55,74 @@ const Button = styled.button`
   background-color: teal;
   color: white;
   cursor: pointer;
-  margin-bottom: 10px;
-  &:disabled {
-    color: green;
-    cursor: not-allowed;
-  }
-`;
-
-const Link = styled.a`
-  margin: 5px 0px;
-  font-size: 12px;
-  text-decoration: underline;
-  cursor: pointer;
-  color:blue;
-`;
-
-const Error = styled.span`
-  color: red;
+  margin-top: 55px; 
 `;
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const dispatch = useDispatch();
-  const { isFetching, error } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    login(dispatch, { username, password });
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const accessToken = data.accessToken;
+
+        localStorage.setItem("token", accessToken);
+        console.log("Inicio de sesión exitoso");
+        navigate('/profile');
+      } else {
+        setError("Credenciales incorrectas");
+      }
+    } catch (error) {
+      setError("Error en la solicitud: " + error.message);
+    }
+  };
+
   return (
     <Container>
       <Wrapper>
-        <Title>Iniciar Sesion</Title>
-        <Form>
+        <Title>Iniciar sesión</Title>
+        <Form onSubmit={handleSubmit}>
           <Input
             placeholder="Correo"
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
           />
           <Input
             placeholder="Contraseña"
             type="password"
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
           />
-          <Button onClick={handleClick} disabled={isFetching}>
-            Iniciar sesion
-          </Button>
-          {error && <Error>Llena todos los datos.</Error>}
           <Link>Crear una cuenta</Link>
+          <Button type="submit">Iniciar sesión</Button>
+          {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
         </Form>
       </Wrapper>
     </Container>
