@@ -50,6 +50,15 @@ const findOne = ( async (req, res) => {
   }
 });
 
+const findOneById = async (req, res) => {
+  try {
+      const orders = await Order.findById(req.params.id);
+      res.status(200).json(orders);
+  } catch (err) {
+      res.status(500).json(err);
+  }
+};
+
 // //GET ALL
 
 const findAll = ( async (req, res) => {
@@ -98,4 +107,4 @@ const findIncome = ( async (req, res) => {
   }
 });
 
-module.exports = {findAll, findOne, save, update, drop, findIncome};
+module.exports = {findAll, findOne, save, update, drop, findIncome, findOneById};

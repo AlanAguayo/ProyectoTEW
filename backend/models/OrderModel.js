@@ -23,6 +23,11 @@ const OrderSchema = new mongoose.Schema(
     amount: Number,
     address: String,
     status: String,
+    coupon: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Coupon',
+      require: true
+    },
   },
   { 
     timestamps: true,

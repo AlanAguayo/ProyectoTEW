@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const CategorySchema = new mongoose.Schema({
-    name: String
+    name: String,
+    image: String,
 },
 {
     collection: 'categories'

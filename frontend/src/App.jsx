@@ -8,15 +8,17 @@ import Success from "./pages/client/Success";
 import AdminHome from "./pages/admin/Home"
 import AdminNewProduct from "./pages/admin/NewProduct"
 import AdminNewUser from "./pages/admin/NewUser"
+import AdminNewCategory from "./pages/admin/NewCategory"
 import AdminProduct from "./pages/admin/Product"
 import AdminProductList from "./pages/admin/ProductList"
 import Profile from "./pages/client/Profile"
 import AdminUserList from "./pages/admin/UserList"
 import OrderList from "./pages/client/OrderList"
 import AdminOrderList from "./pages/admin/OrderList"
+import AdminOrderDetail from "./pages/admin/OrderDetail"
 import AdminCategories from "./pages/admin/Categories"
 import AdminCoupons from "./pages/admin/Coupons"
-import AdminPayMethod from "./pages/admin/PayMethod"
+import AdminNewCoupons from "./pages/admin/NewCoupon"
 import LogOut from "./pages/LogOut";
 
 import {
@@ -46,9 +48,11 @@ const App = () => {
         <Route path="/admin/products" element={<AdminProductList />}/>
         <Route path="/admin/users" element={<AdminUserList />}/>
         <Route path="/admin/orders" element={<AdminOrderList />}/>
+        <Route path="/admin/orders/:id" element={<AdminOrderDetail />}/>
         <Route path="/admin/categories" element={<AdminCategories />}/>
+        <Route path="/admin/categories/:id" element={<AdminNewCategory />}/>
         <Route path="/admin/coupons" element={<AdminCoupons />}/>
-        <Route path="/admin/paymethod" element={<AdminPayMethod />}/>
+        <Route path="/admin/coupons/:id" element={<AdminNewCoupons />}/>
     </Routes>
     </BrowserRouter>
   );

@@ -17,7 +17,7 @@ const authJwt = require('./libs/jwt');
 //app.use(authJwt()) 
 const cors = require("cors");
 app.use(cors());
-app.use(authJwt()) 
+//app.use(authJwt()) 
 
 mongoose
   .connect(process.env.MONGO_URL)

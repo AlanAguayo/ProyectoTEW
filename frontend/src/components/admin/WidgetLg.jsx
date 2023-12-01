@@ -27,7 +27,7 @@ text-align: left;
 const WidgetLgUser = styled.td`
 display: flex;
   align-items: center;
-  font-weight: 600;
+  font-weight: 300;
 `;
 
 const WidgetLgImg = styled.img`
@@ -69,19 +69,40 @@ const WidgetLgButton = styled.button`
 
 export default function WidgetLg() {
   const [orders, setOrders] = useState([]);
+  const [users, setUsers] = useState({});
 
   useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const res = await userRequest.get("users");
+        // Crea un objeto de usuarios para mapear IDs de usuarios a nombres y correos electrónicos
+        const userMap = {};
+        res.data.forEach((user) => {
+          userMap[user._id] = { name: user.name, email: user.email };
+        });
+        setUsers(userMap);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
     const getOrders = async () => {
       try {
         const res = await userRequest.get("orders");
         setOrders(res.data);
-      } catch {}
+        getUsers();
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
     };
+
     getOrders();
   }, []);
+
   const Button = ({ type }) => {
     return <WidgetLgButton className={type}>{type}</WidgetLgButton>;
   };
+
   return (
     <Container>
       <WidgetLgTitle>Transacciones</WidgetLgTitle>
@@ -95,7 +116,7 @@ export default function WidgetLg() {
         {orders.map((order) => (
           <tr key={order._id}>
             <WidgetLgUser>
-              <span>{order.userId}</span>
+              {users[order.userId]?.email}
             </WidgetLgUser>
             <WidgetLgDate>{format(order.createdAt)}</WidgetLgDate>
             <WidgetLgAmount>${order.amount}</WidgetLgAmount>

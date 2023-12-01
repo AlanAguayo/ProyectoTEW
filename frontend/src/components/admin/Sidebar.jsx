@@ -105,12 +105,6 @@ export default function Sidebar() {
               Cupones
             </SidebarListItem>
             </StyledLink>
-            <StyledLink to="/admin/paymethod">
-            <SidebarListItem>
-              <FaCreditCard style={{ marginRight: '5px', fontSize: '20px !important' }} />
-              Metodos de pago
-            </SidebarListItem>
-            </StyledLink>
           </SidebarList>
         </SidebarMenu>
       </SidebarWrapper>

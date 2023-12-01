@@ -1,29 +1,24 @@
-import 'react-data-grid/lib/styles.css';
-import DataGrid from 'react-data-grid';
-import { FaTrash } from "react-icons/fa";
-import { useState } from "react";
+import { FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteProduct, getProducts } from "../../redux/apiCallsAdmin";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Topbar from "../../components/admin/Topbar"
 import Sidebar from "../../components/admin/Sidebar"
 import {AgGridReact} from 'ag-grid-react';
+import axios from "axios";
 import 'ag-grid-community/styles//ag-grid.css';
-import 'ag-grid-community/styles//ag-theme-alpine.css';
-import { productRows } from '../../dummyData';
+import 'ag-grid-community/styles//ag-theme-quartz.css';
 
 const Container = styled.div`
 display: flex;
 `;
 
-const ProductListItem = styled.div`
+const OrderListOrder = styled.div`
 display: flex;
   align-items: center;
 `;
 
-const ProductListImg = styled.img`
+const OrderListImg = styled.img`
 width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -36,99 +31,83 @@ const MainContent = styled.div`
   padding: 20px;
 `;
 
-const ProductListEdit = styled.button`
-border: none;
-  border-radius: 10px;
-  padding: 5px 10px;
-  background-color: #3bb077;
-  color: white;
-  cursor: pointer;
-  margin-right: 20px;
-`;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
-
-  &:hover {
-    text-decoration: none;
-    color: inherit;
-  }
-`;
-
-const ProductListDelete = styled.div`
-color: red;
-  cursor: pointer;
-`;
-
-const TrashRenderer = (props) => ({}
-
-);
-
-const Button = styled.button`
-  width: 100%;
-  padding: 10px;
-  background-color: black;
-  color: white;
-  font-weight: 600;
-`;
-
-const frameworkComponents = {
-  trashRenderer: TrashRenderer,
-};
-
 export default function OrderList() {
-  const [data, setData] = useState(productRows);
+  const [ordersItems, setOrdersItems] = useState([]);
 
-  const dispatch = useDispatch();
-  //const products = useSelector((state) => state.product.products);
+  const fetchData = async () => {
+    try {
+      const ordersResponse = await axios.get("http://localhost:5000/api/orders");
 
-  useEffect(() => {
-  //  getProducts(dispatch);
-  }, [dispatch]);
+      const ordersWithUser = await Promise.all(ordersResponse.data.map(async (order) => {
+        const userResponse = await axios.get(`http://localhost:5000/api/users/find/${order.userId}`);
+        const user = userResponse.data;
+        return { ...order, userId: user.email };
+      }));
 
-  const handleDelete = (id) => {
-    deleteProduct(id, dispatch);
+      const ordersWithCoupon = await Promise.all(ordersWithUser.map(async (order) => {
+        if (order.coupon) {
+          const couponResponse = await axios.get(`http://localhost:5000/api/coupons/${order.coupon}`);
+          const coupon = couponResponse.data;
+          return { ...order, coupon: coupon.code };
+        }
+        return order;
+      }));
+
+      setOrdersItems(ordersWithCoupon);
+    } catch (error) {
+      console.error("Error fetching orders data:", error);
+    }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const columns = [
-    { field: "_id", headerName: "Id", width: 220 },
+    { field: "_id", headerName: "Id", width: 240,},
     {
-      field: "product",
-      headerName: "Producto",
-      width: 200,
-      renderCell: (params) => {
-        return (
-          <ProductListItem>
-            <ProductListImg src={params.row.img} alt="" />
-            {params.row.title}
-          </ProductListItem>
-        );
-      },
-    },
-    { field: "inStock", headerName: "Cantidad", width: 200 },
-    {
-      field: "price",
-      headerName: "Precio",
-      width: 160,
+      field: "userId",
+      headerName: "Usuario",
+      width: 250,
+      filter: true,
     },
     {
-      field: "action",
+      field: "amount",
+      headerName: "Cantidad",
+      width: 250,
+      filter: true,
+    },
+    {
+      field: "address",
+      headerName: "Direccion",
+      width: 250,
+      filter: true,
+    },
+    {
+      field: "status",
+      headerName: "Estado",
+      width: 250,
+      filter: true,
+    },
+    {
+      field: "coupon",
+      headerName: "Cupon",
+      width: 250,
+      filter: true,
+    },
+    {
+      field: "_id",
       headerName: "Acciones",
-      width: 150,
-      renderCell: (params) => {
+      cellRenderer: (params) => {
         return (
           <>
-            <Link to={"/product/" + params.row._id}>
-              <ProductListEdit>Edit</ProductListEdit>
+            <Link to={`/admin/orders/${params.value}`}>
+              <FaEye/>
             </Link>
-            <FaTrash 
-              style={{color: "red", cursor: "pointer"}}
-              onClick={() => handleDelete(params.row._id)}
-            />
           </>
         );
       },
+      width: 100
     },
   ];
 
@@ -138,16 +117,19 @@ export default function OrderList() {
       <Container>
         <Sidebar />
         <MainContent>
+        <div
+				className="ag-theme-quartz"
+				style={{
+					height: '500px',
+				}}
+			>
         <AgGridReact
-        rowData={data}
+        rowData={ordersItems}
         columnDefs={columns}
         pagination={true}
-        paginationPageSize={5}
-        checkboxSelection={true}
-        frameworkComponents={frameworkComponents}
+        paginationPageSize={20}
       />
-      <br/>
-      <br/>
+      </div>
         </MainContent>
       </Container>
     </div>

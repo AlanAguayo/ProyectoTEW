@@ -50,11 +50,6 @@ const NewUserGenderLabel = styled.label`
   color: #555;
 `;
 
-const NewUserSelect = styled.select`
-  height: 40px;
-  border-radius: 5px;
-`;
-
 const NewUserButton = styled.button`
   width: 200px;
   border: none;

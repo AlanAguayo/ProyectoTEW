@@ -6,6 +6,8 @@ router.get('/', orderController.findAll);
 
 router.get('/find/:userId', orderController.findOne);
 
+router.get('/:id', orderController.findOneById);
+
 router.post('/', orderController.save);
 
 router.put('/:id', orderController.update);

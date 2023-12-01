@@ -1,49 +1,21 @@
-import 'react-data-grid/lib/styles.css';
-import DataGrid from 'react-data-grid';
-import { FaTrash } from "react-icons/fa";
-import { useState } from "react";
+import { FaTrash, FaPencilAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteProduct, getProducts } from "../../redux/apiCallsAdmin";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Topbar from "../../components/admin/Topbar"
 import Sidebar from "../../components/admin/Sidebar"
 import {AgGridReact} from 'ag-grid-react';
+import axios from "axios";
 import 'ag-grid-community/styles//ag-grid.css';
-import 'ag-grid-community/styles//ag-theme-alpine.css';
-import { productRows } from '../../dummyData';
+import 'ag-grid-community/styles//ag-theme-quartz.css';
 
 const Container = styled.div`
 display: flex;
 `;
 
-const ProductListItem = styled.div`
-display: flex;
-  align-items: center;
-`;
-
-const ProductListImg = styled.img`
-width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-`;
-
 const MainContent = styled.div`
   flex: 4;
   padding: 20px;
-`;
-
-const ProductListEdit = styled.button`
-border: none;
-  border-radius: 10px;
-  padding: 5px 10px;
-  background-color: #3bb077;
-  color: white;
-  cursor: pointer;
-  margin-right: 20px;
 `;
 
 const StyledLink = styled(Link)`
@@ -56,15 +28,6 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const ProductListDelete = styled.div`
-color: red;
-  cursor: pointer;
-`;
-
-const TrashRenderer = (props) => ({}
-
-);
-
 const Button = styled.button`
   width: 100%;
   padding: 10px;
@@ -73,62 +36,64 @@ const Button = styled.button`
   font-weight: 600;
 `;
 
-const frameworkComponents = {
-  trashRenderer: TrashRenderer,
-};
+export default function CouponList() {
+  const [couponsItems, setCouponsItems] = useState([]);
 
-export default function Coupons() {
-  const [data, setData] = useState(productRows);
-
-  const dispatch = useDispatch();
-  //const products = useSelector((state) => state.product.products);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/coupons");
+      setCouponsItems(response.data);
+    } catch (error) {
+      console.error("Error fetching coupons data:", error);
+    }
+  };
 
   useEffect(() => {
-  //  getProducts(dispatch);
-  }, [dispatch]);
+    fetchData();
+  }, []);
 
-  const handleDelete = (id) => {
-    deleteProduct(id, dispatch);
+  const handleDelete = async (couponId) => {
+    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este usuario?");
+    
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:5000/api/coupons/${couponId}`);
+        fetchData();
+      } catch (error) {
+        console.error(`Error al eliminar el usuario con ID ${couponId}:`, error);
+      }
+    }
   };
 
   const columns = [
-    { field: "_id", headerName: "Id", width: 220 },
+    { field: "_id", headerName: "Id", width: 240,},
     {
-      field: "product",
-      headerName: "Producto",
-      width: 200,
-      renderCell: (params) => {
-        return (
-          <ProductListItem>
-            <ProductListImg src={params.row.img} alt="" />
-            {params.row.title}
-          </ProductListItem>
-        );
-      },
-    },
-    { field: "inStock", headerName: "Cantidad", width: 200 },
-    {
-      field: "price",
-      headerName: "Precio",
-      width: 160,
+      field: "code",
+      headerName: "Codigo",
+      width: 250,
+      filter: true,
     },
     {
-      field: "action",
+      field: "discount",
+      headerName: "Descuento",
+      width: 250,
+      filter: true,
+    },
+    {
+      field: "_id",
       headerName: "Acciones",
-      width: 150,
-      renderCell: (params) => {
+      cellRenderer: (params) => {
         return (
           <>
-            <Link to={"/product/" + params.row._id}>
-              <ProductListEdit>Edit</ProductListEdit>
+            <Link to={`/admin/coupons/${params.value}`}>
+              <FaPencilAlt/>
             </Link>
-            <FaTrash 
-              style={{color: "red", cursor: "pointer"}}
-              onClick={() => handleDelete(params.row._id)}
-            />
+            {" - "}
+            <FaTrash onClick={() => handleDelete(params.value)}/>
           </>
         );
       },
+      width: 100
     },
   ];
 
@@ -138,19 +103,22 @@ export default function Coupons() {
       <Container>
         <Sidebar />
         <MainContent>
+        <div
+				className="ag-theme-quartz"
+				style={{
+					height: '500px',
+				}}
+			>
         <AgGridReact
-        rowData={data}
+        rowData={couponsItems}
         columnDefs={columns}
         pagination={true}
-        paginationPageSize={5}
-        checkboxSelection={true}
-        frameworkComponents={frameworkComponents}
+        paginationPageSize={20}
       />
-      <StyledLink to="/admin/products/new">
+      </div>
+      <StyledLink to="/admin/coupons/new">
       <Button>Agregar</Button>
       </StyledLink>
-      <br/>
-      <br/>
         </MainContent>
       </Container>
     </div>
