@@ -14,7 +14,7 @@ const couponRoute = require("./routes/CouponRoutes");
 const sliderRoute = require("./routes/SliderRoutes");
 //const authJwt = require('./libs/jwt');
 
-app.use(authJwt()) 
+//app.use(authJwt()) 
 const cors = require("cors");
 
 mongoose

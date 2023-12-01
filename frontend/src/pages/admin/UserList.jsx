@@ -1,13 +1,13 @@
-import { FaTrash } from "react-icons/fa";
-import { userRows } from "../../dummyData";
+import { FaTrash, FaPencilAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Topbar from "../../components/admin/Topbar"
 import Sidebar from "../../components/admin/Sidebar"
 import {AgGridReact} from 'ag-grid-react';
+import axios from "axios";
 import 'ag-grid-community/styles//ag-grid.css';
-import 'ag-grid-community/styles//ag-theme-alpine.css';
+import 'ag-grid-community/styles//ag-theme-quartz.css';
 
 const Container = styled.div`
 display: flex;
@@ -26,71 +26,47 @@ width: 32px;
   margin-right: 10px;
 `;
 
-const UserListEdit = styled.button`
-border: none;
-    border-radius: 10px;
-    padding: 5px 10px;
-    background-color: #3bb077;
-    color: white;
-    cursor: pointer;
-    margin-right: 20px;
-`;
-
 const MainContent = styled.div`
   flex: 4;
   padding: 20px;
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
-
-  &:hover {
-    text-decoration: none;
-    color: inherit;
-  }
-`;
-
-const Button = styled.button`
-  width: 100%;
-  padding: 10px;
-  background-color: black;
-  color: white;
-  font-weight: 600;
-`;
-
-const UserListDelete = styled.button`
-color: red;
-    cursor: pointer;
-`;
-
-const TrashRenderer = (props) => (
-  <FaTrash
-    style={{ color: "red", cursor: "pointer" }}
-    onClick={() => props.onClick(props.node.data.id)}
-  />
-);
-
-
-const frameworkComponents = {
-  trashRenderer: TrashRenderer,
-};
-
-
-
 export default function UserList() {
-  const [data, setData] = useState(userRows);
+  const [usersItems, setUsersItems] = useState([]);
 
-  const handleDelete = (id) => {
-    setData(data.filter((item) => item.id !== id));
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/users");
+      setUsersItems(response.data);
+    } catch (error) {
+      console.error("Error fetching users data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDelete = async (userId) => {
+    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este usuario?");
+    
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:5000/api/users/${userId}`);
+        fetchData();
+      } catch (error) {
+        console.error(`Error al eliminar el usuario con ID ${userId}:`, error);
+      }
+    }
   };
 
   const columns = [
-    { field: "id", headerName: "Id", width: 90 },
+    { field: "_id", headerName: "Id", width: 240,},
     {
-      field: "user",
+      field: "name",
       headerName: "Nombre",
-      width: 200,
+      width: 250,
+      filter: true,
       renderCell: (params) => {
         return (
           <UserListUser>
@@ -100,37 +76,44 @@ export default function UserList() {
         );
       },
     },
-    { field: "email", headerName: "Correo", width: 200 },
+    { field: "email", headerName: "Correo", width: 340},
     {
-      field: "status",
-      headerName: "Status",
-      width: 120,
+      field: "isAdmin",
+      headerName: "Rol",
+      width: 100,
+      filter: 'agSetColumnFilter',
+      cellRenderer: (params) => {
+        if(params.value){
+          return "Admin";
+        }
+        return "Cliente";
+      }
     },
     {
-      field: "transaction",
-      headerName: "Transacciones",
-      width: 160,
+      field: "phone",
+      headerName: "Telefono",
+      width: 100,
     },
     {
-      field: "action",
+      field: "address",
+      headerName: "Direccion",
+      width: 100,
+    },
+    {
+      field: "_id",
       headerName: "Acciones",
-      width: 150,
-      renderCell: (params) => {
+      cellRenderer: (params) => {
         return (
           <>
-            <Link to={"/user/" + params.row.id}>
-              <UserListEdit>Edit</UserListEdit>
+            <Link to={`/admin/users/${params.value}`}>
+              <FaPencilAlt/>
             </Link>
-            <FaTrash
-              style={{
-                color: "red",
-                cursor: "pointer"
-              }}
-              onClick={() => handleDelete(params.row.id)}
-            />
+            {" - "}
+            <FaTrash onClick={() => handleDelete(params.value)}/>
           </>
         );
       },
+      width: 100
     },
   ];
 
@@ -140,19 +123,19 @@ export default function UserList() {
       <Container>
         <Sidebar />
         <MainContent>
+        <div
+				className="ag-theme-quartz"
+				style={{
+					height: '500px',
+				}}
+			>
         <AgGridReact
-        rowData={data}
+        rowData={usersItems}
         columnDefs={columns}
         pagination={true}
-        paginationPageSize={5}
-        checkboxSelection={true}
-        frameworkComponents={frameworkComponents}
+        paginationPageSize={20}
       />
-      <StyledLink to="/admin/users/new">
-      <Button>Agregar</Button>
-      </StyledLink>
-      <br/>
-      <br/>
+      </div>
         </MainContent>
       </Container>
     </div>
