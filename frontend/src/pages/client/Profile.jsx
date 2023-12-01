@@ -11,6 +11,8 @@ import {
 import styled from "styled-components";
 import Navbar from "../../components/client/Navbar";
 import Announcement from "../../components/client/Announcement";
+import React, { useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Button } from "react-bootstrap";
 
 const User = styled.div`
@@ -161,6 +163,19 @@ const UserUpdateButton = styled.button`
 `;
 
 export default function Profile() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
+  
   return (
     <>
     <Navbar />
@@ -207,6 +222,9 @@ export default function Profile() {
             Historial de compras
             </Link>
           </UserShowInfoTitle>
+          <UserShowInfo>
+            <Link to="/logout">Cerrar sesión</Link>
+          </UserShowInfo>
         </UserShow>
         <UserUpdate>
           <UserUpdateTitle>Editar</UserUpdateTitle>
