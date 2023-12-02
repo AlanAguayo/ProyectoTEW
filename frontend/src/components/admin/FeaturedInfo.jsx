@@ -1,7 +1,7 @@
-import { FaArrowLeft , FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { userRequest } from "../../requestMethods";
 import styled from "styled-components";
+import axios from "axios";
 
 const Featured = styled.div`
   width: 100%;
@@ -52,10 +52,12 @@ export default function FeaturedInfo() {
   useEffect(() => {
     const getIncome = async () => {
       try {
-        const res = await userRequest.get("orders/income");
+        const res = await axios.get("http://localhost:5000/api/orders");
         setIncome(res.data);
         setPerc((res.data[1].total * 100) / res.data[0].total - 100);
-      } catch {}
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
     getIncome();
   }, []);
@@ -63,36 +65,47 @@ export default function FeaturedInfo() {
   return (
     <Featured>
       <FeaturedItem>
-        <FeaturedTitle>Ganancias</FeaturedTitle>
+        <FeaturedTitle>Usuarios</FeaturedTitle>
         <FeaturedMoneyContainer>
           <FeaturedMoney>${income[1]?.total}</FeaturedMoney>
           <FeaturedMoneyRate>
             %{Math.floor(perc)}{" "}
             {perc < 0 ? (
-              <FaArrowLeft style={{fontSize: '14px', marginLeft: '5px', color: 'red'}}/>
+              <FaArrowLeft
+                style={{ fontSize: "14px", marginLeft: "5px", color: "red" }}
+              />
             ) : (
-              <FaArrowRight style={{ fontSize: '14px', marginLeft: '5px', color: 'green' }} />
+              <FaArrowRight
+                style={{ fontSize: "14px", marginLeft: "5px", color: "green" }}
+              />
             )}
           </FeaturedMoneyRate>
         </FeaturedMoneyContainer>
         <FeaturedSub>Comparado al mes pasado</FeaturedSub>
       </FeaturedItem>
+      {/* Puedes copiar y pegar este bloque para los otros dos items */}
       <FeaturedItem>
         <FeaturedTitle>Ventas</FeaturedTitle>
         <FeaturedMoneyContainer>
           <FeaturedMoney>$0</FeaturedMoney>
           <FeaturedMoneyRate>
-            -1.4 <FaArrowLeft style={{fontSize: '14px', marginLeft: '5px', color: 'red'}}/>
+            -1.4{" "}
+            <FaArrowLeft
+              style={{ fontSize: "14px", marginLeft: "5px", color: "red" }}
+            />
           </FeaturedMoneyRate>
         </FeaturedMoneyContainer>
         <FeaturedSub>Comparado al mes pasado</FeaturedSub>
       </FeaturedItem>
       <FeaturedItem>
-        <FeaturedTitle>Gastos</FeaturedTitle>
+        <FeaturedTitle>Pedidos</FeaturedTitle>
         <FeaturedMoneyContainer>
           <FeaturedMoney>$0</FeaturedMoney>
           <FeaturedMoneyRate>
-            $0 <FaArrowRight style={{ fontSize: '14px', marginLeft: '5px', color: 'green' }} />
+            $0{" "}
+            <FaArrowRight
+              style={{ fontSize: "14px", marginLeft: "5px", color: "green" }}
+            />
           </FeaturedMoneyRate>
         </FeaturedMoneyContainer>
         <FeaturedSub>Comparado por mes</FeaturedSub>

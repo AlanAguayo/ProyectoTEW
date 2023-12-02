@@ -40,16 +40,6 @@ const NewCouponItemInput = styled.input`
   border-radius: 5px;
 `;
 
-const NewCouponGenderInput = styled.input`
-  margin-top: 15px;
-`;
-
-const NewCouponGenderLabel = styled.label`
-  margin: 10px;
-  font-size: 18px;
-  color: #555;
-`;
-
 const NewCouponButton = styled.button`
   width: 200px;
   border: none;
