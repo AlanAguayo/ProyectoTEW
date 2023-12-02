@@ -13,19 +13,6 @@ const Container = styled.div`
 display: flex;
 `;
 
-const OrderListOrder = styled.div`
-display: flex;
-  align-items: center;
-`;
-
-const OrderListImg = styled.img`
-width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-`;
-
 const MainContent = styled.div`
   flex: 4;
   padding: 20px;

@@ -44,7 +44,7 @@ const CategoryItem = ({ item }) => {
   return (
     <Container>
       <Link to={`/products/${item._id}`}>
-      <Image src={item.image} />
+      <Image src={"https://proyectotew.s3.amazonaws.com/categories/"+item.image} />
       <Info>
         <Title>{item.name}</Title>
         <Button>Comprar Ahora</Button>

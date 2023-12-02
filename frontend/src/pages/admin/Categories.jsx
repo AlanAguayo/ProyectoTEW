@@ -8,14 +8,11 @@ import {AgGridReact} from 'ag-grid-react';
 import axios from "axios";
 import 'ag-grid-community/styles//ag-grid.css';
 import 'ag-grid-community/styles//ag-theme-quartz.css';
+import { storage } from "../../firebase"
+import { ref, listAll, getDownloadURL, deleteObject } from 'firebase/storage';
 
 const Container = styled.div`
 display: flex;
-`;
-
-const CategoryListCategory = styled.div`
-display: flex;
-  align-items: center;
 `;
 
 const CategoryListImg = styled.img`
@@ -51,29 +48,49 @@ const Button = styled.button`
 
 export default function CategoryList() {
   const [categoriesItems, setCategoriesItems] = useState([]);
+  const [image, setImage] =useState([]);
 
   const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/categories");
       setCategoriesItems(response.data);
     } catch (error) {
-      console.error("Error fetching categories data:", error);
     }
   };
 
   useEffect(() => {
     fetchData();
+    fetchImage();
   }, []);
 
+  const fetchImage = async () => {
+    try {
+      const imageRef = ref(storage, "categories/");
+      const response = await listAll(imageRef);
+  
+      const urls = await Promise.all(response.items.map(async (item) => {
+        return getDownloadURL(item);
+      }));
+  
+      setImage(urls);
+    } catch (error) {
+      console.error("Error fetching images:", error);
+    }
+  };
+
   const handleDelete = async (categoryId) => {
-    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este usuario?");
+    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar esta categoria?");
     
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:5000/api/categories/${categoryId}`);
-        fetchData();
+      await axios.delete(`http://localhost:5000/api/categories/${categoryId}`);
+      
+      const imageRefToDelete = ref(storage, `categories/${categoryId}`);
+      await deleteObject(imageRefToDelete);
+      
+      fetchData();
+      fetchImage();
       } catch (error) {
-        console.error(`Error al eliminar el usuario con ID ${categoryId}:`, error);
       }
     }
   };
@@ -81,21 +98,19 @@ export default function CategoryList() {
   const columns = [
     { field: "_id", headerName: "Id", width: 240,},
     {
-      field: "image",
+      field: "_id",
       headerName: "Imagen",
       cellRenderer: (params) => {
-    return (
-      <div>
-        {
-          <CategoryListCategory>
-            <CategoryListImg src={params.value} alt="Imagen" />
-          </CategoryListCategory>
-        }
-      </div>
-    );
-    
-      },
-      width: 100
+
+    const categoryImage = image.find((img) => img.includes(params.value));
+
+      return (
+        <div>
+          <CategoryListImg src={categoryImage} alt="Imagen" />
+        </div>
+      );
+    },
+    width: 100
     },
     {
       field: "name",

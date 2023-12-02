@@ -10,6 +10,8 @@ import { AgGridReact } from 'ag-grid-react';
 import axios from "axios";
 import 'ag-grid-community/styles//ag-grid.css';
 import 'ag-grid-community/styles//ag-theme-quartz.css';
+import { storage } from "../../firebase";
+import { ref, getDownloadURL } from 'firebase/storage';
 
 const Container = styled.div`
   display: flex;
@@ -37,15 +39,18 @@ const OrderDetails = styled.div`
   margin-bottom: 20px;
 `;
 
-const ProductsGrid = styled.div`
-  height: 400px;
-  width: 100%;
-`;
+const UserImage = ({ imageUrl, altText, size }) => (
+    <ProductListProduct>
+      <ProductListImg src={imageUrl} alt={altText} style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', marginRight: '10px' }}/>
+    </ProductListProduct>
+  );
 
 const OrderDetailsPage = () => {
     const { id } = useParams();
 const [orderDetails, setOrderDetails] = useState({});
 const [productsList, setProductsList] = useState([]);
+const [userImage, setUserImage] = useState("");
+
 
 useEffect(() => {
     const fetchData = async () => {
@@ -60,7 +65,6 @@ useEffect(() => {
                 ...order,
                 userName: user.name,
                 userEmail: user.email,
-                userImg: user.img,
                 userPhone: user.phone,
                 userAddress: user.address,
             };
@@ -81,11 +85,23 @@ useEffect(() => {
                 return { ...product, category: category.name };
             }));
 
-            const orderedProducts = order.products.map(orderProduct => orderProduct.productId);
-            const filteredProducts = productsWithCategory.filter(product => orderedProducts.includes(product._id));
+            const productsWithQuantities = order.products.map(orderProduct => {
+                const matchingProduct = productsWithCategory.find(product => product._id === orderProduct.productId);
+                return {
+                  ...matchingProduct,
+                  quantity: orderProduct.quantity,
+                };
+              });
+
+              const orderedProducts = order.products.map(orderProduct => orderProduct.productId);
+              const filteredProducts = productsWithQuantities.filter(product => orderedProducts.includes(product._id));  
 
             setProductsList(filteredProducts);
 
+
+        const userImageRef = ref(storage, `users/${user._id}.jpg`);
+        const userImageUrl = await getDownloadURL(userImageRef);
+        setUserImage(userImageUrl);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -142,6 +158,11 @@ useEffect(() => {
             width: 100,
         },
         {
+            field: "quantity",
+            headerName: "Cantidad",
+            width: 100,
+        },
+        {
             field: "_id",
             headerName: "Acciones",
             cellRenderer: (params) => {
@@ -172,9 +193,9 @@ useEffect(() => {
                     </OrderDetails>
                     <OrderDetails>
                         <h2>Usuario</h2>
+                        <UserImage imageUrl={userImage} altText="Imagen de usuario" size={64}/>
                         <p>Nombre: {orderDetails.userName}</p>
                         <p>Email: {orderDetails.userEmail}</p>
-                        <p>Imagen: {orderDetails.userImg}</p>
                         <p>Telefono: {orderDetails.userPhone}</p>
                         <p>Direccion: {orderDetails.userAddress}</p>
                         <p>Cantidad: {orderDetails.amount}</p>
