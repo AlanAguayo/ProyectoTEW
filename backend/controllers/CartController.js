@@ -43,10 +43,14 @@ const drop = ( async (req, res) => {
 
 //GET USER CART
 const findOne = ( async (req, res) => {
+  
   try {
+    console.log("Si pasa");
     const cart = await Cart.findOne({ userId: req.params.userId });
+    console.log("Hola?");
     res.status(200).json(cart);
   } catch (err) {
+    console.log("No pasa");
     res.status(500).json(err);
   }
 });

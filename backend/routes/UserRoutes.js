@@ -2,16 +2,20 @@
 const express = require("express");
 const router = express.Router();
 
+const checkAuth = require("../Middleware/auth");
+const checkRole = require("../Middleware/roleAuth");
+
+
 const userController = require("../controllers/UserController.js");
 
-router.get('/', userController.findAll);
+router.get('/',checkAuth,checkRole, userController.findAll);
 
-router.get('/find/:id', userController.findOne);
+router.get('/find/:id',checkAuth, userController.findOne);
 
-router.get('/stats', userController.stats);
+router.get('/stats',checkAuth, userController.stats);
 
-router.put('/:id', userController.update);
+router.put('/:id',checkAuth, userController.update);
 
-router.delete('/:id', userController.drop);
+router.delete('/:id',checkAuth, userController.drop);
 
 module.exports = router;
