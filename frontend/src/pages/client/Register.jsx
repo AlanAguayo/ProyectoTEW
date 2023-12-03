@@ -54,16 +54,20 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-
 const Register = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
+    lastName: "",
     email: "",
     birthday: "",
+    country: "",
+    street: "",
+    city: "",
+    state: "",
+    cp: "",
     phone: "",
-    address: "",
     password: "",
     isAdmin: false,
     img: "nouser.jpg"
@@ -109,10 +113,25 @@ const Register = () => {
       <Wrapper>
         <Title>Crea una cuenta</Title>
         <Form onSubmit={handleSubmit}>
-        <Input
-            placeholder="Nombre completo"
+          <Input
+            placeholder="Nombre"
             name="name"
             value={formData.name}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            placeholder="Apellidos"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            placeholder="Correo"
+            type="email"
+            name="email"
+            value={formData.email}
             onChange={handleChange}
             required
           />
@@ -132,21 +151,45 @@ const Register = () => {
             required
           />
           <Input
-            placeholder="Dirección"
+            placeholder="País"
             type="text"
-            name="address"
-            value={formData.address}
+            name="country"
+            value={formData.country}
             onChange={handleChange}
             required
           />
           <Input
-            placeholder="Correo"
-            type="email"
-            name="email"
-            value={formData.email}
+            placeholder="Calle"
+            type="text"
+            name="street"
+            value={formData.street}
             onChange={handleChange}
             required
           />
+          <Input
+            placeholder="Ciudad"
+            type="text"
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            placeholder="Estado"
+            type="text"
+            name="state"
+            value={formData.state}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            placeholder="Codigo Postal"
+            type="number"
+            name="cp"
+            value={formData.cp}
+            onChange={handleChange}
+            required
+          />          
           <Input
             placeholder="Contraseña"
             type="password"

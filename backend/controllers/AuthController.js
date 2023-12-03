@@ -10,6 +10,7 @@ const register = async (req, res) => {
   }
   const newUser = new User({
     name: req.body.name,
+    lastName: req.body.lastName,
     email: req.body.email,
     password: CryptoJS.AES.encrypt(
       req.body.password,
@@ -17,7 +18,11 @@ const register = async (req, res) => {
     ).toString(),
     birthday:req.body.birthday,
     phone:req.body.phone,
-    address:req.body.address,
+    country: req.body.country,
+    street: req.body.street,
+    city: req.body.city,
+    state: req.body.state,
+    cp: req.body.cp,
     isAdmin:req.body.isAdmin,
     img: req.body.img,
   });

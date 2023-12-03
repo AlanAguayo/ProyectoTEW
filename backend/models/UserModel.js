@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const UserSchema = new mongoose.Schema(
   {
     name: String,
+    lastName: String,
     email: String,
     password: String,
     birthday: String,
@@ -10,6 +11,11 @@ const UserSchema = new mongoose.Schema(
     address: String,
     isAdmin: Boolean,
     img: String ,
+    country: String,
+    street: String,
+    city: String,
+    state: String,
+    cp: Number
   },
   { 
     timestamps: true,

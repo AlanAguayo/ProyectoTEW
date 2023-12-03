@@ -91,14 +91,20 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        const { _id, name, img, isAdmin, birthday, phone, address, accessToken } = data;
+        const { _id, name, lastName, img, isAdmin, birthday,
+          phone, country, accessToken, street, city, state, cp } = data;
 
         localStorage.setItem("id", _id);
         localStorage.setItem("name", name);
+        localStorage.setItem("lastName", lastName);
         localStorage.setItem("img", img);
         localStorage.setItem("birthday", birthday);
         localStorage.setItem("phone", phone);
-        localStorage.setItem("address", address);
+        localStorage.setItem("country", country);
+        localStorage.setItem("street", street);
+        localStorage.setItem("city", city);
+        localStorage.setItem("state", state);
+        localStorage.setItem("cp", cp);
         localStorage.setItem("isAdmin", isAdmin);
 
         createToken(accessToken);

@@ -165,18 +165,28 @@ export default function Profile() {
   const id = localStorage.getItem('id');
   const email = useSelector((state) => state.user.currentUser?.email);  
   const name = localStorage.getItem('name');
+  const lastName = localStorage.getItem('lastName');
   const birthday = localStorage.getItem('birthday');
   const phone = localStorage.getItem('phone');
-  const address = localStorage.getItem('address');
+  const country = localStorage.getItem('country');
+  const street = localStorage.getItem('street');
+  const city = localStorage.getItem('city');
+  const state = localStorage.getItem('state');
+  const cp = localStorage.getItem('cp');
   const img = localStorage.getItem('img');
   const token = getToken();
 
   const [formData, setFormData] = useState({
     email: email || "", 
     name: name || "",
+    lastName: lastName || "",
     birthday: birthday || "",
     phone: phone || "",
-    address: address || "",
+    country: country || "",
+    street: street || "",
+    city: city || "",
+    state: state || "",
+    cp: cp || "",
   });
 
   const handleChange = (e) => {
@@ -204,8 +214,15 @@ export default function Profile() {
         console.log("Actualización exitosa");
         localStorage.setItem('email', formData.email);
         localStorage.setItem('name', formData.name);
+        localStorage.setItem('lastName', formData.lastName);
+        localStorage.setItem('birthday', formData.birthday);
         localStorage.setItem('phone', formData.phone);
-        localStorage.setItem('address', formData.address);
+        localStorage.setItem('country', formData.country);
+        localStorage.setItem('street', formData.street);
+        localStorage.setItem('city', formData.city);
+        localStorage.setItem('state', formData.state);
+        localStorage.setItem('cp', formData.cp);
+        navigate("/profile");
       } else {
         console.error("Error en la actualización:", response.statusText);
       }
@@ -231,7 +248,7 @@ export default function Profile() {
               alt="Imagen del usuario"
             />
             <UserShowTopTitle>
-              <UserShowUsername>{name}</UserShowUsername>
+              <UserShowUsername>{name+' '+lastName}</UserShowUsername>
             </UserShowTopTitle>
           </UserShowTop>
           <UserShowBottom>
@@ -251,7 +268,7 @@ export default function Profile() {
             </UserShowInfo>
             <UserShowInfo>
               <FaLocationArrow/>
-              <UserShowInfoTitle>{address? address : 'Dirección no registrada'}</UserShowInfoTitle>
+              <UserShowInfoTitle>{street+', '+city+', '+state+', '+country+', '+cp}</UserShowInfoTitle>
             </UserShowInfo>
           </UserShowBottom>
           <FaStore/>
@@ -267,7 +284,27 @@ export default function Profile() {
         <UserUpdate>
           <UserUpdateTitle>Editar</UserUpdateTitle>
           <UserUpdateForm>
-            <div>
+            <div>              
+              <UserUpdateItem>
+                <UserUpdateItemLabel>Nombre</UserUpdateItemLabel>
+                <UserUpdateInput
+                  type="text"
+                  placeholder={`${name}`}
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+              </UserUpdateItem>
+              <UserUpdateItem>
+                <UserUpdateItemLabel>Apellidos</UserUpdateItemLabel>
+                <UserUpdateInput
+                  type="text"
+                  placeholder={`${lastName}`}
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                />
+              </UserUpdateItem>
               <UserUpdateItem>
                 <UserUpdateItemLabel>Correo</UserUpdateItemLabel>
                 <UserUpdateInput
@@ -279,12 +316,12 @@ export default function Profile() {
                 />
               </UserUpdateItem>
               <UserUpdateItem>
-                <UserUpdateItemLabel>Nombre</UserUpdateItemLabel>
+                <UserUpdateItemLabel>Cumpleaños</UserUpdateItemLabel>
                 <UserUpdateInput
-                  type="text"
-                  placeholder={`${name}`}
-                  name="name"
-                  value={formData.name}
+                  type="date"
+                  placeholder={`${birthday}`}
+                  name="birthday"
+                  value={formData.birthday}
                   onChange={handleChange}
                 />
               </UserUpdateItem>
@@ -299,30 +336,55 @@ export default function Profile() {
                 />
               </UserUpdateItem>
               <UserUpdateItem>
-                <UserUpdateItemLabel>Direccion</UserUpdateItemLabel>
-                <UserUpdateInput
-                  type="text"
-                  placeholder={`${address}`}
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                />
-              </UserUpdateItem>
-              {/*
-              <UserUpdateItem>
                 <UserUpdateItemLabel>Pais</UserUpdateItemLabel>
                 <UserUpdateInput
                   type="text"
-                  placeholder="Mexico"
+                  placeholder={`${country}`}
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                />
+              </UserUpdateItem>
+              <UserUpdateItem>
+                <UserUpdateItemLabel>Calle</UserUpdateItemLabel>
+                <UserUpdateInput
+                  type="text"
+                  placeholder={`${street}`}
+                  name="street"
+                  value={formData.street}
+                  onChange={handleChange}
+                />
+              </UserUpdateItem>
+              <UserUpdateItem>
+                <UserUpdateItemLabel>Ciudad</UserUpdateItemLabel>
+                <UserUpdateInput
+                  type="text"
+                  placeholder={`${city}`}
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
                 />
               </UserUpdateItem>
               <UserUpdateItem>
                 <UserUpdateItemLabel>Estado</UserUpdateItemLabel>
                 <UserUpdateInput
                   type="text"
-                  placeholder="Guanajuato"
+                  placeholder={`${state}`}
+                  name="state"
+                  value={formData.state}
+                  onChange={handleChange}
                 />
-              </UserUpdateItem>*/}
+              </UserUpdateItem>
+              <UserUpdateItem>
+                <UserUpdateItemLabel>Código Postal</UserUpdateItemLabel>
+                <UserUpdateInput
+                  type="number"
+                  placeholder={`${cp}`}
+                  name="cp"
+                  value={formData.cp}
+                  onChange={handleChange}
+                />
+              </UserUpdateItem>
             </div>
             <UserUpdateRight>
               <UserUpdateUpload>
