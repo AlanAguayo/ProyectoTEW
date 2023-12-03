@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   FaLocationArrow,
   FaMailBulk,
@@ -11,9 +12,10 @@ import {
 import styled from "styled-components";
 import Navbar from "../../components/client/Navbar";
 import Announcement from "../../components/client/Announcement";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Button } from "react-bootstrap";
+import { checkAuth, getToken } from "../../authUtils";
 
 const User = styled.div`
   flex: 4;
@@ -77,10 +79,6 @@ const UserShowTopTitle = styled.div`
 
 const UserShowUsername = styled.span`
 font-weight: 600;
-`;
-
-const UserShowUserTitle = styled.span`
-  font-weight: 300;
 `;
 
 const UserShowBottom = styled.div`
@@ -164,17 +162,58 @@ const UserUpdateButton = styled.button`
 
 export default function Profile() {
   const navigate = useNavigate();
+  const id = localStorage.getItem('id');
+  const email = useSelector((state) => state.user.currentUser?.email);  
+  const name = localStorage.getItem('name');
+  const birthday = localStorage.getItem('birthday');
+  const phone = localStorage.getItem('phone');
+  const address = localStorage.getItem('address');
+  const img = localStorage.getItem('img');
+  const token = getToken();
+
+  const [formData, setFormData] = useState({
+    email: email || "", 
+    name: name || "",
+    birthday: birthday || "",
+    phone: phone || "",
+    address: address || "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/login");
-      }
-    };
-
-    checkAuth();
+    checkAuth(navigate);
   }, [navigate]);
+  
+  const handleUpdate = async () => {    
+    try {
+      console.log("FormData:", formData);
+      
+      const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (response.ok) {
+        console.log("Actualización exitosa");
+        localStorage.setItem('email', formData.email);
+        localStorage.setItem('name', formData.name);
+        localStorage.setItem('phone', formData.phone);
+        localStorage.setItem('address', formData.address);
+      } else {
+        console.error("Error en la actualización:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error en la solicitud:", error.message);
+    }
+  };
+  
   
   return (
     <>
@@ -188,32 +227,31 @@ export default function Profile() {
         <UserShow>
           <UserShowTop>
             <UserShowImg
-              src="https://images.pexels.com/photos/1152994/pexels-photo-1152994.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-              alt=""
+              src={`${img}`}
+              alt="Imagen del usuario"
             />
             <UserShowTopTitle>
-              <UserShowUsername>Alan Aguayo</UserShowUsername>
-              <UserShowUserTitle>Usuario</UserShowUserTitle>
+              <UserShowUsername>{name}</UserShowUsername>
             </UserShowTopTitle>
           </UserShowTop>
           <UserShowBottom>
             <UserShowTitle>Informacion de la cuenta</UserShowTitle>
             <UserShowInfo>
               <FaUser/>
-              <UserShowInfoTitle>19030034@itcelaya.edu.mx</UserShowInfoTitle>
+              <UserShowInfoTitle>{email}</UserShowInfoTitle>
             </UserShowInfo>
             <UserShowInfo>
              <FaCalendar/> 
-              <UserShowInfoTitle>31/10/2000</UserShowInfoTitle>
+              <UserShowInfoTitle>{birthday? birthday : 'Cumpleaños no registrado'}</UserShowInfoTitle>
             </UserShowInfo>
             <UserShowInfoTitle>Informacion de contacto</UserShowInfoTitle>
             <UserShowInfo>
               <FaPhone/>
-              <UserShowInfoTitle>+52 123 123 1212</UserShowInfoTitle>
+              <UserShowInfoTitle>{phone? phone : 'Teléfono no registrado'}</UserShowInfoTitle>
             </UserShowInfo>
             <UserShowInfo>
               <FaLocationArrow/>
-              <UserShowInfoTitle>Mexico | Celaya | Mi direccion</UserShowInfoTitle>
+              <UserShowInfoTitle>{address? address : 'Dirección no registrada'}</UserShowInfoTitle>
             </UserShowInfo>
           </UserShowBottom>
           <FaStore/>
@@ -234,30 +272,43 @@ export default function Profile() {
                 <UserUpdateItemLabel>Correo</UserUpdateItemLabel>
                 <UserUpdateInput
                   type="text"
-                  placeholder="19030034@itcelaya.edu.mx"
+                  placeholder={`${email}`}
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </UserUpdateItem>
               <UserUpdateItem>
                 <UserUpdateItemLabel>Nombre</UserUpdateItemLabel>
                 <UserUpdateInput
                   type="text"
-                  placeholder="Alan Aguayo"
+                  placeholder={`${name}`}
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                 />
               </UserUpdateItem>
               <UserUpdateItem>
                 <UserUpdateItemLabel>Telefono</UserUpdateItemLabel>
                 <UserUpdateInput
-                  type="text"
-                  placeholder="+52 123 123 1212"
+                  type="number"
+                  placeholder={`${phone}`}
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                 />
               </UserUpdateItem>
               <UserUpdateItem>
                 <UserUpdateItemLabel>Direccion</UserUpdateItemLabel>
                 <UserUpdateInput
                   type="text"
-                  placeholder="Calle #000"
+                  placeholder={`${address}`}
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
                 />
               </UserUpdateItem>
+              {/*
               <UserUpdateItem>
                 <UserUpdateItemLabel>Pais</UserUpdateItemLabel>
                 <UserUpdateInput
@@ -271,20 +322,20 @@ export default function Profile() {
                   type="text"
                   placeholder="Guanajuato"
                 />
-              </UserUpdateItem>
+              </UserUpdateItem>*/}
             </div>
             <UserUpdateRight>
               <UserUpdateUpload>
                 <UserUpdateImg
-                  src="https://images.pexels.com/photos/1152994/pexels-photo-1152994.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-                  alt=""
+                  src={`${img}`}
+                  alt="Imagen del usuario"
                 />
                 <label htmlFor="file">
                 <FaUpload/>
                 </label>
                 <input type="file" id="file" style={{ display: "none" }} />
               </UserUpdateUpload>
-              <UserUpdateButton>Update</UserUpdateButton>
+              <UserUpdateButton onClick={handleUpdate}>Update</UserUpdateButton>
             </UserUpdateRight>
           </UserUpdateForm>
         </UserUpdate>

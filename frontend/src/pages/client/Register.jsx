@@ -54,15 +54,23 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
+const Label = styled.label`
+  font-size: 16px;
+  margin-bottom: 8px;
+`;
+
 const Register = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    birthday: "",
+    phone: "",
+    address: "",
     password: "",
     isAdmin: false,
-    img: "https://publicdomainvectors.org/photos/abstract-user-flat-4.png"
+    img: "nouser.jpg"
   });
 
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -109,6 +117,29 @@ const Register = () => {
             placeholder="Nombre completo"
             name="name"
             value={formData.name}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            type="date"
+            name="birthday"
+            value={formData.birthday}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            placeholder="Teléfono"
+            type="number"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            placeholder="Dirección"
+            type="text"
+            name="address"
+            value={formData.address}
             onChange={handleChange}
             required
           />

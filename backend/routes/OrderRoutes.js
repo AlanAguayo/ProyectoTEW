@@ -6,7 +6,7 @@ const checkRole = require("../Middleware/roleAuth");
 
 router.get('/',checkAuth,checkRole, orderController.findAll);
 
-router.get('/find/:userId',checkAuth,checkRole, orderController.findOne);
+router.get('/find/:userId',checkAuth, orderController.findOne);
 
 router.get('/:id',checkAuth, orderController.findOneById);
 

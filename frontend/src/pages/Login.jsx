@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loginStart, loginSuccess, loginFailure } from '../redux/userReduxAdmin';
+import { createToken } from "../authUtils";
 
 const Container = styled.div`
   width: 100vw;
@@ -59,6 +62,7 @@ const Button = styled.button`
 `;
 
 const Login = () => {
+  const dispatch = useDispatch();   
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -76,6 +80,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      dispatch(loginStart());
       const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: {
@@ -86,16 +91,26 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        const accessToken = data.accessToken;
+        const { _id, name, img, isAdmin, birthday, phone, address, accessToken } = data;
 
-        localStorage.setItem("token", accessToken);
-        console.log("Inicio de sesión exitoso");
+        localStorage.setItem("id", _id);
+        localStorage.setItem("name", name);
+        localStorage.setItem("img", img);
+        localStorage.setItem("birthday", birthday);
+        localStorage.setItem("phone", phone);
+        localStorage.setItem("address", address);
+        localStorage.setItem("isAdmin", isAdmin);
+
+        createToken(accessToken);
+
+        dispatch(loginSuccess(formData));
         navigate('/profile');
       } else {
-        setError("Credenciales incorrectas");
+        dispatch(loginFailure());
       }
     } catch (error) {
       setError("Error en la solicitud: " + error.message);
+      dispatch(loginFailure());
     }
   };
 
@@ -120,7 +135,7 @@ const Login = () => {
             onChange={handleChange}
             required
           />
-          <Link>Crear una cuenta</Link>
+          <Link href="/register">Crear una cuenta</Link>
           <Button type="submit">Iniciar sesión</Button>
           {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
         </Form>

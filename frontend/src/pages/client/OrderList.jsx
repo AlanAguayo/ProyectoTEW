@@ -1,50 +1,27 @@
 import 'react-data-grid/lib/styles.css';
 import DataGrid from 'react-data-grid';
 import { FaTrash } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteProduct, getProducts } from "../../redux/apiCallsAdmin";
 import styled from "styled-components";
 import Navbar from "../../components/client/Navbar"
-import {AgGridReact} from 'ag-grid-react';
-import 'ag-grid-community/styles//ag-grid.css';
-import 'ag-grid-community/styles//ag-theme-alpine.css';
-import { productRows } from '../../dummyData';
-import Chart from "../../components/Chart";
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { userData } from "../../dummyData";
+import { useNavigate } from 'react-router-dom';
+import Chart from "../../components/Chart";
+import { checkAuth, getToken } from "../../authUtils";
+import axios from "axios";
 
 const Container = styled.div`
-display: flex;
-`;
-
-const ProductListItem = styled.div`
-display: flex;
-  align-items: center;
-`;
-
-const ProductListImg = styled.img`
-width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
+  display: flex;
 `;
 
 const MainContent = styled.div`
   flex: 4;
   padding: 20px;
-`;
-
-const ProductListEdit = styled.button`
-border: none;
-  border-radius: 10px;
-  padding: 5px 10px;
-  background-color: #3bb077;
-  color: white;
-  cursor: pointer;
-  margin-right: 20px;
 `;
 
 const StyledLink = styled(Link)`
@@ -57,14 +34,35 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const ProductListEdit = styled.button`
+  border: none;
+  border-radius: 10px;
+  padding: 5px 10px;
+  background-color: #3bb077;
+  color: white;
+  cursor: pointer;
+  margin-right: 20px;
+`;
+
+const ProductListItem = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const ProductListImg = styled.img`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+`;
+
 const ProductListDelete = styled.div`
-color: red;
+  color: red;
   cursor: pointer;
 `;
 
-const TrashRenderer = (props) => ({}
-
-);
+const TrashRenderer = (props) => ({});
 
 const Button = styled.button`
   width: 100%;
@@ -79,18 +77,36 @@ const frameworkComponents = {
 };
 
 export default function OrderList() {
-  const [data, setData] = useState(productRows);
+  const navigate = useNavigate();
+  const [data, setData] = useState([]);
 
-  const dispatch = useDispatch();
-  //const products = useSelector((state) => state.product.products);
-
+  const id = localStorage.getItem('id');
+  
+  const fetchData = async () => {
+    try {
+      const token = getToken();
+  
+      const response = await axios.get(`http://localhost:5000/api/orders/find/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      setData(response.data); 
+    } catch (error) {
+      console.error("Error fetching orders data:", error);
+  
+      // Log the response data if available
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+      }
+    }
+  }
+  
   useEffect(() => {
-  //  getProducts(dispatch);
-  }, [dispatch]);
-
-  const handleDelete = (id) => {
-    deleteProduct(id, dispatch);
-  };
+    checkAuth(navigate);
+    fetchData();
+  }, [navigate]);
 
   const columns = [
     { field: "_id", headerName: "Id", width: 220 },
@@ -107,12 +123,23 @@ export default function OrderList() {
         );
       },
     },
-    { field: "inStock", headerName: "Cantidad", width: 200 },
+    /*{ 
+      field: "quantity", 
+      headerName: "Cantidad", 
+      width: 200,
+      renderCell: (params) => params.row.products[0].quantity,
+    },*/
     {
-      field: "price",
-      headerName: "Precio",
+      field: "amount",
+      headerName: "Monto",
       width: 160,
     },
+    {
+      field: "status",
+      headerName: "Estado",
+      width: 160,
+    },
+    {/*
     {
       field: "action",
       headerName: "Acciones",
@@ -123,14 +150,12 @@ export default function OrderList() {
             <Link to={"/product/" + params.row._id}>
               <ProductListEdit>Edit</ProductListEdit>
             </Link>
-            <FaTrash 
-              style={{color: "red", cursor: "pointer"}}
-              onClick={() => handleDelete(params.row._id)}
-            />
+
           </>
         );
       },
     },
+    */}
   ];
 
   return (
@@ -138,15 +163,15 @@ export default function OrderList() {
       <Navbar />
       <Container>
         <MainContent>
-        <AgGridReact
-        rowData={data}
-        columnDefs={columns}
-        pagination={true}
-        paginationPageSize={5}
-        checkboxSelection={true}
-        frameworkComponents={frameworkComponents}
-      />
-      <Chart
+          <AgGridReact
+            rowData={data}
+            columnDefs={columns}
+            pagination={true}
+            paginationPageSize={5}
+            checkboxSelection={true}
+            frameworkComponents={frameworkComponents}
+          />
+          <Chart
             data={userData}
             title="Compras"
             grid

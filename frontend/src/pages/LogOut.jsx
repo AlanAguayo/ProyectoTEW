@@ -6,8 +6,14 @@ const LogOut = () => {
 
   useEffect(() => {
     const logout = () => {
+      localStorage.removeItem("id");
+      localStorage.removeItem("name");
+      localStorage.removeItem("img");
+      localStorage.removeItem("birthday");
+      localStorage.removeItem("phone");
+      localStorage.removeItem("address"); 
+      localStorage.removeItem("isAdmin"); 
       localStorage.removeItem("token");
-
       navigate("/");
     };
 

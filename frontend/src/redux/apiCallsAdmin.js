@@ -1,5 +1,6 @@
 import { loginFailure, loginStart, loginSuccess } from "./userReduxAdmin";
 import { publicRequest, userRequest } from "../requestMethods";
+import axios from 'axios';
 import {
   getProductFailure,
   getProductStart,

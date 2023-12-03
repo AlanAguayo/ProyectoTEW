@@ -15,9 +15,11 @@ const register = async (req, res) => {
       req.body.password,
       process.env.PASS_SEC
     ).toString(),
+    birthday:req.body.birthday,
+    phone:req.body.phone,
+    address:req.body.address,
     isAdmin:req.body.isAdmin,
     img: req.body.img,
-
   });
 
   try {
