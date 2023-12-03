@@ -54,10 +54,6 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-const Label = styled.label`
-  font-size: 16px;
-  margin-bottom: 8px;
-`;
 
 const Register = () => {
   const navigate = useNavigate();

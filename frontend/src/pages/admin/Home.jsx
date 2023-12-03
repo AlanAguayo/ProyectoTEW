@@ -7,6 +7,8 @@ import Sidebar from "../../components/admin/Sidebar";
 import Topbar from "../../components/admin/Topbar";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
+import { checkAdmin, getToken } from "../../authUtils";
 
 const Container = styled.div`
   display: flex;
@@ -22,12 +24,21 @@ const HomeWidgets = styled.div`
 `;
 
 export default function Home() {
+
+  const navigate = useNavigate();
+  const token = getToken();
   const [orderData, setOrderData] = useState([]);
 
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
+
   useEffect(() => {
+    checkAdmin(navigate);
     const fetchData = async () => {
       try {
-        const ordersRes = await axios.get("http://localhost:5000/api/orders");
+        const ordersRes = await axios.get("http://localhost:5000/api/orders" ,{headers});
 
         const monthlyData = {};
         ordersRes.data.forEach((order) => {
@@ -50,7 +61,7 @@ export default function Home() {
     };
 
     fetchData();
-  }, []);
+  }, [navigate]);
 
   return (
     <div>

@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { checkAuth, getToken } from "../../authUtils";
+
 
 const Container = styled.div`
   flex: 1;
@@ -59,12 +62,20 @@ const WidgetSmButton = styled(Link)`
 `;
 
 export default function WidgetSm() {
+  const navigate = useNavigate();
+  const token = getToken();
+
   const [users, setUsers] = useState([]);
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/users");
+        const response = await axios.get("http://localhost:5000/api/users",{headers});
         setUsers(response.data.slice(0, 10));
       } catch (error) {
         console.error("Error fetching users:", error);

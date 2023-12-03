@@ -11,10 +11,13 @@
     "ag-grid-react": "^31.0.0",
     "aws-sdk": "^2.1510.0",
     "axios": "^1.6.2",
+    "crypto": "^1.0.1",
+    "crypto-browserify": "^3.12.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-jwt": "^8.4.1",
     "firebase": "^10.7.0",
+    "jsonwebtoken": "^9.0.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.1",
     "react-data-grid": "^7.0.0-beta.41",
@@ -33,9 +36,15 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.2",
     "resize-observer-polyfill": "^1.5.1",
+    "stream": "^0.0.2",
+    "stream-browserify": "^3.0.0",
     "styled-components": "^6.1.0",
     "timeago.js": "^4.0.2",
     "web-vitals": "^3.5.0"
+  },
+  "browser": {
+    "crypto": false,
+    "stream": false
   },
   "scripts": {
     "start": "react-scripts start",

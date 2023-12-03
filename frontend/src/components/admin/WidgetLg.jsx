@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import {format} from "timeago.js"
 import axios from "axios";
 import styled from "styled-components";
+import { useNavigate } from 'react-router-dom';
+import { getToken } from "../../authUtils";
+
 
 const Container = styled.div`
 flex: 2;
@@ -60,24 +63,35 @@ const WidgetLgButton = styled.button`
 `;
 
 export default function WidgetLg() {
+  const token = getToken();
+
   const [orders, setOrders] = useState([]);
 
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
 
   const fetchData = async () => {
     try {
-      const ordersResponse = await axios.get("http://localhost:5000/api/orders");
+      const ordersResponse = await axios.get("http://localhost:5000/api/orders",{headers});
 
       const ordersWithUser = await Promise.all(ordersResponse.data.map(async (order) => {
-        const userResponse = await axios.get(`http://localhost:5000/api/users/find/${order.userId}`);
+        const userResponse = await axios.get(`http://localhost:5000/api/users/find/${order.userId}`,{headers});
         const user = userResponse.data;
         return { ...order, userId: user.email };
       }));
 
       setOrders(ordersWithUser);
     } catch (error) {
-      console.error("Error fetching orders data:", error);
+      
+        console.error("Error fetching orders data:", error);
+      
+      
     }
   };
+
+  
 
   useEffect(() => {
     fetchData();

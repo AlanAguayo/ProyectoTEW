@@ -10,6 +10,8 @@ import 'ag-grid-community/styles//ag-grid.css';
 import 'ag-grid-community/styles//ag-theme-quartz.css';
 import { storage } from "../../firebase"
 import { ref, listAll, getDownloadURL, deleteObject } from 'firebase/storage';
+import { useNavigate } from 'react-router-dom';
+import { checkAdmin, getToken } from "../../authUtils";
 
 const Container = styled.div`
 display: flex;
@@ -47,21 +49,31 @@ const Button = styled.button`
 `;
 
 export default function CategoryList() {
+
+  const navigate = useNavigate();
+  const token = getToken();
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
+
   const [categoriesItems, setCategoriesItems] = useState([]);
   const [image, setImage] =useState([]);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/categories");
+      const response = await axios.get("http://localhost:5000/api/categories",{headers});
       setCategoriesItems(response.data);
     } catch (error) {
     }
   };
 
   useEffect(() => {
+    checkAdmin(navigate);
     fetchData();
     fetchImage();
-  }, []);
+  }, [navigate]);
 
   const fetchImage = async () => {
     try {

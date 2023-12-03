@@ -2,6 +2,11 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import {getToken } from "../../authUtils";
+
+
+
+
 
 const Featured = styled.div`
   width: 100%;
@@ -46,6 +51,7 @@ const FeaturedSub = styled.span`
 `;
 
 export default function FeaturedInfo() {
+  const token = getToken();
   const [userCountThisMonth, setUserCountThisMonth] = useState(0);
   const [userCountLastMonth, setUserCountLastMonth] = useState(0);
   const [salesAmountThisMonth, setSalesAmountThisMonth] = useState(0);
@@ -53,11 +59,17 @@ export default function FeaturedInfo() {
   const [orderCountThisMonth, setOrderCountThisMonth] = useState(0);
   const [orderCountLastMonth, setOrderCountLastMonth] = useState(0);
 
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
+
   useEffect(() => {
+    
     const fetchData = async () => {
       try {
         // Usuarios
-        const usersRes = await axios.get("http://localhost:5000/api/users");
+        const usersRes = await axios.get("http://localhost:5000/api/users",{headers});
         const currentMonth = new Date().getMonth() + 1;
         const usersThisMonth = usersRes.data.filter((user) => {
           const registrationMonth = new Date(user.createdAt).getMonth() + 1;
@@ -71,7 +83,7 @@ export default function FeaturedInfo() {
         setUserCountLastMonth(usersLastMonth.length);
 
         // Ventas
-        const salesRes = await axios.get("http://localhost:5000/api/orders");
+        const salesRes = await axios.get("http://localhost:5000/api/orders",{headers});
 
         const salesThisMonth = salesRes.data.filter((sale) => {
           const saleMonth = new Date(sale.createdAt).getMonth() + 1;
@@ -90,7 +102,7 @@ export default function FeaturedInfo() {
         setSalesAmountLastMonth(calculateTotalAmount(salesLastMonth));
 
         // Pedidos
-        const ordersRes = await axios.get("http://localhost:5000/api/orders");
+        const ordersRes = await axios.get("http://localhost:5000/api/orders",{headers});
 
         const ordersThisMonth = ordersRes.data.filter((order) => {
           const orderMonth = new Date(order.createdAt).getMonth() + 1;
