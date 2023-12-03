@@ -36,7 +36,9 @@ const login =  async (req, res) => {
       return res.status(400).json({ error: 'Correo electrónico no válido' });
     }
     const user = await User.findOne({ email: req.body.email });
-    !user && res.status(401).json("Wrong credentials!");
+    if (!user) {
+      return res.status(401).json("Wrong credentials!");
+    }
 
     const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
@@ -44,8 +46,9 @@ const login =  async (req, res) => {
     );
     const OriginalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
 
-    OriginalPassword !== req.body.password &&
-      res.status(401).json("Wrong credentials!");
+    if (OriginalPassword !== req.body.password) {
+      return res.status(401).json("Wrong credentials!");
+    }
 
     const accessToken = jwt.sign(
       {

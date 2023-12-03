@@ -1,19 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const orderController = require("../controllers/OrderController.js");
+const checkAuth = require("../Middleware/auth");
+const checkRole = require("../Middleware/roleAuth");
 
-router.get('/', orderController.findAll);
+router.get('/',checkAuth,checkRole, orderController.findAll);
 
-router.get('/find/:userId', orderController.findOne);
+router.get('/find/:userId',checkAuth,checkRole, orderController.findOne);
 
-router.get('/:id', orderController.findOneById);
+router.get('/:id',checkAuth, orderController.findOneById);
 
-router.post('/', orderController.save);
+router.post('/',checkAuth, orderController.save);
 
-router.put('/:id', orderController.update);
+router.put('/:id',checkAuth, orderController.update);
 
-router.delete('/:id', orderController.drop);
+router.delete('/:id',checkAuth, orderController.drop);
 
-router.get('/income', orderController.findIncome);
+router.get('/income',checkAuth, orderController.findIncome);
 
 module.exports = router;
