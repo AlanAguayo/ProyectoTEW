@@ -1,270 +1,471 @@
-import { Link, useLocation } from "react-router-dom";
-import Chart from "../../components/Chart";
-import { productData } from "../../dummyData";
-import {
-  FaUpload
-} from "react-icons/fa";
-import { useSelector } from "react-redux";
-import { useEffect, useMemo, useState } from "react";
-import { userRequest } from "../../requestMethods";
 import styled from "styled-components";
-import Topbar from "../../components/admin/Topbar"
-import Sidebar from "../../components/admin/Sidebar"
+import Sidebar from "../../components/admin/Sidebar";
+import Topbar from "../../components/admin/Topbar";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Select from "react-select";
+import { FaTrash } from "react-icons/fa";
+import { useDropzone } from "react-dropzone";
+import { ref, uploadBytes } from 'firebase/storage';
+import { storage } from '../../firebase'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { useParams } from "react-router-dom";
+import { list, getDownloadURL, deleteObject } from 'firebase/storage';
 
 const Container = styled.div`
-display: flex;
-padding: 20px;
+  display: flex;
 `;
 
 const MainContent = styled.div`
   flex: 4;
-  padding: 20px;
 `;
 
-const ProductTitleContainer = styled.div`
-display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const ProductAddButton = styled.div`
-width: 80px;
-  border: none;
-  padding: 5px;
-  background-color: teal;
-  color: white;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-`;
-
-const ProductTop = styled.div`
-display: flex;
-`;
-
-const ProductTopLeft = styled.div`
-flex: 1;
-`;
-
-const ProductTopRight = styled.div`
-flex: 1;
-padding: 20px;
-  margin: 20px;
-  -webkit-box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
-  box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
-`;
-
-const ProductInfoImg = styled.div`
-width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 20px;
-`;
-
-const ProductInfoTop = styled.div`
-display: flex;
-  align-items: center;
-`;
-
-const ProductName = styled.div`
-font-weight: 600;
-`;
-
-const ProductInfoBottom = styled.div`
-margin-top: 10px;
-`;
-
-const ProductInfoItem = styled.div`
-width: 150px;
+const ProductForm = styled.form`
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
 `;
 
-const ProductInfoValue = styled.div`
-font-weight: 300;
-`;
-
-const ProductBottom = styled.div`
-padding: 20px;
-  margin: 20px;
-  -webkit-box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
-  box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
-`;
-
-const ProductForm = styled.div`
-display: flex;
-  justify-content: space-between;
-`;
-
-const ProductFormLeft = styled.div`
-display: flex;
+const ProductItem = styled.div`
+  width: 400px;
+  display: flex;
   flex-direction: column;
-`;
-
-const ProductFormLeftLabel = styled.div`
-margin-bottom: 10px;
-  color: gray;
-`;
-
-const ProductFormLeftInput = styled.div`
-margin-bottom: 10px;
-  border: none;
-  padding: 5px;
-  border-bottom: 1px solid gray;
-`;
-
-const ProductFormLeftSelect = styled.div`
-margin-bottom: 10px;
-}
-`;
-
-const ProductUploadImg = styled.div`
-width: 100px;
-  height: 100px;
-  border-radius: 10px;
-  object-fit: cover;
+  margin-top: 10px;
   margin-right: 20px;
-}
 `;
 
-const ProductFormRight = styled.div`
-display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-`;
-
-const ProductUpload = styled.div`
-display: flex;
-  align-items: center;
-}
-`;
-
-const ProductButton = styled.div`
-border: none;
-  padding: 5px;
-  border-radius: 5px;
-  background-color: darkblue;
-  color:white;
+const ProductItemLabel = styled.label`
+  margin-bottom: 10px;
+  font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
-}
+  color: rgb(151, 150, 150);
 `;
 
-export default function Product() {
-  const location = useLocation();
-  const productId = location.pathname.split("/")[2];
-  const [pStats, setPStats] = useState([]);
+const ProductItemInput = styled.input`
+  height: 20px;
+  padding: 10px;
+  border: 1px solid gray;
+  border-radius: 5px;
+`;
 
-  const product = useSelector((state) =>{}
-    //state.product.products.find((product) => product._id === productId)
-  );
+const ProductButton = styled.button`
+  width: 200px;
+  border: none;
+  background-color: darkblue;
+  color: white;
+  padding: 7px 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  margin-top: 30px;
+  cursor: pointer;
+`;
 
-  const MONTHS = useMemo(
-    () => [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Agu",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-    []
-  );
+const StyledInput = styled.input`
+  height: 20px;
+  padding: 10px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  margin-right: 10px;
+`;
+
+const StyledButton = styled.button`
+  border: none;
+  background-color: darkblue;
+  color: white;
+  padding: 7px 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+`;
+
+const StyledItemList = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  div {
+    margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+`;
+
+const StyledDropzone = styled.div`
+  border: 2px dashed gray;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+`;
+
+const StyledImageContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+`;
+
+const StyledImage = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  margin-right: 10px;
+`;
+
+const StyledTrashIcon = styled(FaTrash)`
+  cursor: pointer;
+  color: red;
+`;
+
+const ChartContainer = styled.div`
+  width: 1000px;
+  height: 300px;
+  margin-bottom: 20px;
+`;
+
+const Product = () => {
+  const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [colors, setColors] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [images, setImages] = useState([]);
+  const { id } = useParams();
+  const [formData, setFormData] = useState({
+    name: "",
+    desc: "",
+    category: "",
+    size: [],
+    color: [],
+    price: "",
+  });
+  const [orders, setOrders] = useState([]);
+
+  const onDrop = async (acceptedFiles) => {
+    try {
+      const imagesRef = ref(storage, `products/${id}`);
+      const imageList = await list(imagesRef);
+  
+      const existingImageNumbers = imageList.items.map((item) => {
+        const [, number] = item.name.match(/(\d+)\.jpg/);
+        return parseInt(number);
+      });
+  
+      const nextImageNumber = existingImageNumbers.length > 0 ? Math.max(...existingImageNumbers) + 1 : 1;
+  
+      const uploadPromises = acceptedFiles.map(async (file) => {
+        const storageRef = ref(storage, `products/${id}/${nextImageNumber}.jpg`);
+        await uploadBytes(storageRef, file);
+      });
+  
+      await Promise.all(uploadPromises);
+  
+      const newImages = await Promise.all(
+        Array.from({ length: acceptedFiles.length }, (_, index) =>
+          getDownloadURL(ref(storage, `products/${id}/${nextImageNumber + index}.jpg`))
+        )
+      );
+  
+      setImages((prevImages) => [...prevImages, ...newImages]);
+    } catch (error) {
+      console.error("Error al subir nuevas imágenes:", error);
+    }
+  };
+
+  const removeImage = async (index) => {
+    try {
+      const storageRef = ref(storage, `products/${id}/${index + 1}.jpg`);
+      await deleteObject(storageRef);
+  
+      const updatedImages = [...images];
+      updatedImages.splice(index, 1);
+      setImages(updatedImages);
+    } catch (error) {
+      console.error("Error al eliminar la imagen:", error);
+    }
+  };
 
   useEffect(() => {
-    const getStats = async () => {
+    const fetchProductData = async () => {
       try {
-        const res = await userRequest.get("orders/income?pid=" + productId);
-        const list = res.data.sort((a,b)=>{
-            "return a._id - b._id"
-        })
-        list.map((item) =>
-          setPStats((prev) => [
-            ...prev,
-            { name: MONTHS[item._id - 1], Sales: item.total },
-          ])
+        const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const productData = response.data;
+
+        setFormData({
+          name: productData.name,
+          desc: productData.desc,
+          category: productData.category,
+          size: productData.size,
+          color: productData.color,
+          price: productData.price,
+        });
+
+        setColors(productData.color);
+        setSizes(productData.size);
+
+
+        const category = await axios.get(`http://localhost:5000/api/categories/${productData.category}`);
+        const selectedCategoryOption = { value: category.data._id, label: category.data.name };
+        setSelectedCategory(selectedCategoryOption);
+
+        const imagesRef = ref(storage, `products/${id}`);
+        const imageList = await list(imagesRef);
+
+        const imageDownloadURLs = await Promise.all(
+          imageList.items.map(async (imageRef) => getDownloadURL(imageRef))
         );
-      } catch (err) {
-        console.log(err);
+
+        setImages(imageDownloadURLs);
+
+      } catch (error) {
+        console.error("Error fetching product data:", error);
       }
     };
-    getStats();
-  }, [productId, MONTHS]);
+
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/categories");
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/orders");
+        setOrders(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+
+    fetchProductData();
+
+    fetchOrders();
+  }, [id]);
+
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleCreateProduct = async () => {
+    try {
+      const productData = {
+        name: formData.name,
+        desc: formData.desc,
+        category: formData.category,
+        size: sizes,
+        color: colors,
+        price: parseFloat(formData.price),
+      };
+
+      await axios.put("http://localhost:5000/api/products/"+id, productData);
+
+      navigate("/admin/products");
+    } catch (error) {
+      console.error("Error al crear/editar producto:", error);
+    }
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: "image/*",
+  });
+
+  const addColor = () => {
+    setColors((prevColors) => [...prevColors, formData.color]);
+    setFormData((prevData) => ({ ...prevData, color: "" }));
+  };
+
+  const removeColor = (index) => {
+    setColors((prevColors) => {
+      const updatedColors = [...prevColors];
+      updatedColors.splice(index, 1);
+      return updatedColors;
+    });
+  };
+
+  const addSize = () => {
+    setSizes((prevSizes) => [...prevSizes, formData.size]);
+    setFormData((prevData) => ({ ...prevData, size: "" }));
+  };
+
+  const removeSize = (index) => {
+    setSizes((prevSizes) => {
+      const updatedSizes = [...prevSizes];
+      updatedSizes.splice(index, 1);
+      return updatedSizes;
+    });
+  };
+
+  const salesData = orders
+  .filter((order) => order.products.some((product) => product.productId === id))
+  .map((order) => {
+    const date = new Date(order.createdAt);
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    const quantitySold = order.products
+      .filter((product) => product.productId === id)
+      .reduce((total, product) => total + product.quantity, 0);
+    return { month, year, quantitySold };
+  });
+
+  const groupedData = salesData.reduce((acc, data) => {
+    const key = `${data.year}-${data.month}`;
+    if (!acc[key]) {
+      acc[key] = { month: data.month, year: data.year, quantitySold: 0 };
+    }
+    acc[key].quantitySold += data.quantitySold;
+    return acc;
+  }, {});
+
+  const monthlySalesData = Object.values(groupedData);
 
   return (
     <div>
       <Topbar />
-    <Container>
-      <Sidebar />
+      <Container>
+        <Sidebar />
         <MainContent>
-      <ProductTitleContainer>
-        <h1>Product</h1>
-        <Link to="/newproduct">
-          <ProductAddButton>Create</ProductAddButton>
-        </Link>
-      </ProductTitleContainer>
-      <ProductTop>
-        <ProductTopLeft>
-          <Chart data={pStats} dataKey="Sales" title="Sales Performance" />
-        </ProductTopLeft>
-        <ProductTopRight>
-          <ProductInfoTop>
-            <ProductInfoImg src={"product.img"} alt=""/>
-            <ProductName>{"product.title"}</ProductName>
-          </ProductInfoTop>
-          <ProductInfoBottom>
-            <ProductInfoItem>
-              <span>id:</span>
-              <ProductInfoValue>{"product._id"}</ProductInfoValue>
-            </ProductInfoItem>
-            <ProductInfoItem>
-              <span>sales:</span>
-              <span>5123</span>
-            </ProductInfoItem>
-            <ProductInfoItem>
-              <span>in stock:</span>
-              <ProductInfoValue>{"product.inStock"}</ProductInfoValue>
-            </ProductInfoItem>
-          </ProductInfoBottom>
-        </ProductTopRight>
-      </ProductTop>
-      <ProductBottom>
-        <ProductForm>
-          <ProductFormLeft>
-            <ProductFormLeftLabel>Product Name</ProductFormLeftLabel>
-            <ProductFormLeftInput type="text" placeholder={"product.title"} />
-            <ProductFormLeftLabel>Product Description</ProductFormLeftLabel>
-            <ProductFormLeftInput type="text" placeholder={"product.desc"} />
-            <ProductFormLeftLabel>Price</ProductFormLeftLabel>
-            <ProductFormLeftInput type="text" placeholder={"product.price"} />
-            <ProductFormLeftLabel>In Stock</ProductFormLeftLabel>
-            <ProductFormLeftSelect name="inStock" id="idStock">
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </ProductFormLeftSelect>
-          </ProductFormLeft>
-          <ProductFormRight>
-            <ProductUpload>
-              <ProductUploadImg src={"product.img"} alt=""/>
-              <label for="file">
-                <FaUpload />
-              </label>
-              <input type="file" id="file" style={{ display: "none" }} />
-            </ProductUpload>
-            <ProductButton>Update</ProductButton>
-          </ProductFormRight>
-        </ProductForm>
-      </ProductBottom>
-      </MainContent>
-    </Container>
+          <h1>Producto</h1>
+          <ChartContainer>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlySalesData}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="quantitySold" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+          <ProductForm>
+            <ProductItem>
+              <ProductItemLabel>Nombre</ProductItemLabel>
+              <ProductItemInput
+                type="text"
+                placeholder="Camisa"
+                value={formData.name || ""}
+                onChange={handleInputChange}
+                name="name"
+              />
+            </ProductItem>
+            <ProductItem>
+              <ProductItemLabel>Descripción</ProductItemLabel>
+              <ProductItemInput
+                type="text"
+                placeholder="Buena calidad"
+                value={formData.desc || ""}
+                onChange={handleInputChange}
+                name="desc"
+              />
+            </ProductItem>
+            <ProductItem>
+              <ProductItemLabel>Categorías</ProductItemLabel>
+              <Select
+                options={categories.map((category) => ({ value: category._id, label: category.name }))}
+                value={selectedCategory}
+                onChange={(selectedOption) => {
+                  setSelectedCategory(selectedOption);
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    category: selectedOption ? selectedOption.value : null,
+                  }));
+                }}
+              />
+
+            </ProductItem>
+            <ProductItem>
+              <ProductItemLabel>Color</ProductItemLabel>
+              <div>
+                <StyledInput
+                  type="text"
+                  placeholder="Color"
+                  onChange={(e) => setFormData((prevData) => ({ ...prevData, color: e.target.value }))}
+                />
+                <StyledButton type="button" onClick={addColor}>
+                  Agregar Color
+                </StyledButton>
+              </div>
+              <StyledItemList>
+                {colors.map((color, index) => (
+                  <div key={index}>
+                    {color}
+                    <StyledButton type="button" onClick={() => removeColor(index)}>
+                      Eliminar
+                    </StyledButton>
+                  </div>
+                ))}
+              </StyledItemList>
+            </ProductItem>
+
+            <ProductItem>
+              <ProductItemLabel>Tamaño</ProductItemLabel>
+              <div>
+                <StyledInput
+                  type="text"
+                  placeholder="Tamaño"
+                  onChange={(e) => setFormData((prevData) => ({ ...prevData, size: e.target.value }))}
+                />
+                <StyledButton type="button" onClick={addSize}>
+                  Agregar Tamaño
+                </StyledButton>
+              </div>
+              <StyledItemList>
+                {sizes.map((size, index) => (
+                  <div key={index}>
+                    {size}
+                    <StyledButton type="button" onClick={() => removeSize(index)}>
+                      Eliminar
+                    </StyledButton>
+                  </div>
+                ))}
+              </StyledItemList>
+            </ProductItem>
+
+            <ProductItem>
+              <ProductItemLabel>Precio</ProductItemLabel>
+              <ProductItemInput
+                type="text"
+                placeholder="99.99"
+                value={formData.price || ""}
+                onChange={handleInputChange}
+                name="price"
+              />
+            </ProductItem>
+            <ProductItem>
+              <ProductItemLabel>Imágenes</ProductItemLabel>
+              <StyledDropzone {...getRootProps()}>
+                <input {...getInputProps()} />
+                <p>Arrastra y suelta imágenes aquí o haz clic para seleccionarlas</p>
+              </StyledDropzone>
+              <div>
+                {images.map((image, index) => (
+                  <StyledImageContainer key={index}>
+                    <StyledImage src={image} alt={`Imagen ${index}`} />
+                    <StyledTrashIcon onClick={() => removeImage(index)} />
+                  </StyledImageContainer>
+                ))}
+              </div>
+            </ProductItem>
+          </ProductForm>
+          <ProductButton className="productButton" onClick={handleCreateProduct}>
+            Guardar
+          </ProductButton>
+        </MainContent>
+      </Container>
     </div>
   );
-}
+};
+
+export default Product;

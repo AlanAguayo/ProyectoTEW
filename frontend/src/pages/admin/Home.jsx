@@ -1,13 +1,12 @@
 import Chart from "../../components/Chart";
 import FeaturedInfo from "../../components/admin/FeaturedInfo";
-import { userData } from "../../dummyData";
 import WidgetSm from "../../components/admin/WidgetSm";
 import WidgetLg from "../../components/admin/WidgetLg";
-import { useEffect, useMemo, useState } from "react";
-import { userRequest } from "../../requestMethods";
 import styled from "styled-components";
 import Sidebar from "../../components/admin/Sidebar";
 import Topbar from "../../components/admin/Topbar";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -18,45 +17,40 @@ const MainContent = styled.div`
 `;
 
 const HomeWidgets = styled.div`
-display: flex;
+  display: flex;
   margin: 20px;
 `;
 
 export default function Home() {
-  const [userStats, setUserStats] = useState([]);
-
-  const MONTHS = useMemo(
-    () => [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Agu",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-    []
-  );
+  const [orderData, setOrderData] = useState([]);
 
   useEffect(() => {
-    const getStats = async () => {
+    const fetchData = async () => {
       try {
-        const res = await userRequest.get("/users/stats");
-        res.data.map((item) =>
-          setUserStats((prev) => [
-            ...prev,
-            { name: MONTHS[item._id - 1], "Active User": item.total },
-          ])
-        );
-      } catch { }
+        const ordersRes = await axios.get("http://localhost:5000/api/orders");
+
+        const monthlyData = {};
+        ordersRes.data.forEach((order) => {
+          const month = new Date(order.createdAt).getMonth() + 1;
+          if (!monthlyData[month]) {
+            monthlyData[month] = 0;
+          }
+          monthlyData[month] += order.amount;
+        });
+
+        const chartData = Object.keys(monthlyData).map((month) => ({
+          month: `Month ${month}`,
+          amount: monthlyData[month],
+        }));
+
+        setOrderData(chartData);
+      } catch (error) {
+        console.error("Error fetching order data:", error);
+      }
     };
-    getStats();
-  }, [MONTHS]);
+
+    fetchData();
+  }, []);
 
   return (
     <div>
@@ -65,12 +59,7 @@ export default function Home() {
         <Sidebar />
         <MainContent>
           <FeaturedInfo />
-          <Chart
-            data={userData}
-            title="Ventas"
-            grid
-            dataKey="Active User"
-          />
+          <Chart data={orderData} title="Ventas por Mes" grid dataKey="amount" />
           <HomeWidgets>
             <WidgetSm />
             <WidgetLg />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { userRequest } from "../../requestMethods";
 import {format} from "timeago.js"
+import axios from "axios";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -28,14 +28,6 @@ const WidgetLgUser = styled.td`
 display: flex;
   align-items: center;
   font-weight: 300;
-`;
-
-const WidgetLgImg = styled.img`
-width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
 `;
 
 const WidgetLgDate = styled.td`
@@ -69,34 +61,26 @@ const WidgetLgButton = styled.button`
 
 export default function WidgetLg() {
   const [orders, setOrders] = useState([]);
-  const [users, setUsers] = useState({});
+
+
+  const fetchData = async () => {
+    try {
+      const ordersResponse = await axios.get("http://localhost:5000/api/orders");
+
+      const ordersWithUser = await Promise.all(ordersResponse.data.map(async (order) => {
+        const userResponse = await axios.get(`http://localhost:5000/api/users/find/${order.userId}`);
+        const user = userResponse.data;
+        return { ...order, userId: user.email };
+      }));
+
+      setOrders(ordersWithUser);
+    } catch (error) {
+      console.error("Error fetching orders data:", error);
+    }
+  };
 
   useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const res = await userRequest.get("users");
-        // Crea un objeto de usuarios para mapear IDs de usuarios a nombres y correos electrónicos
-        const userMap = {};
-        res.data.forEach((user) => {
-          userMap[user._id] = { name: user.name, email: user.email };
-        });
-        setUsers(userMap);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    const getOrders = async () => {
-      try {
-        const res = await userRequest.get("orders");
-        setOrders(res.data);
-        getUsers();
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
-
-    getOrders();
+    fetchData();
   }, []);
 
   const Button = ({ type }) => {
@@ -116,7 +100,7 @@ export default function WidgetLg() {
         {orders.map((order) => (
           <tr key={order._id}>
             <WidgetLgUser>
-              {users[order.userId]?.email}
+              {order.userId}
             </WidgetLgUser>
             <WidgetLgDate>{format(order.createdAt)}</WidgetLgDate>
             <WidgetLgAmount>${order.amount}</WidgetLgAmount>

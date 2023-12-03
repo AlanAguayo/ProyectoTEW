@@ -1,11 +1,9 @@
 import {
   FaListAlt,
-  FaChartLine,
   FaIdCard,
   FaStore,
   FaMoneyBillAlt,
   FaShoppingBag,
-  FaCreditCard
 } from 'react-icons/fa';
 
 import { Link } from "react-router-dom";
@@ -62,7 +60,26 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const LogoutButton = styled.button`
+  width: 100%;
+  padding: 10px;
+  background-color: red;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darkred;
+  }
+`;
+
 export default function Sidebar() {
+  const handleLogout = () => {
+    window.location.href = "/logout";
+  };
+
   return (
     <Container>
       <SidebarWrapper>
@@ -107,6 +124,7 @@ export default function Sidebar() {
             </StyledLink>
           </SidebarList>
         </SidebarMenu>
+        <LogoutButton onClick={handleLogout}>Cerrar Sesión</LogoutButton>
       </SidebarWrapper>
     </Container>
   );

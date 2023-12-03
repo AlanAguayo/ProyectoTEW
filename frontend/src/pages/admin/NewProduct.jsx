@@ -3,11 +3,11 @@ import Sidebar from "../../components/admin/Sidebar";
 import Topbar from "../../components/admin/Topbar";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { FaTrash } from "react-icons/fa";
 import { useDropzone } from "react-dropzone";
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes } from 'firebase/storage';
 import { storage } from '../../firebase'
 
 const Container = styled.div`
@@ -62,7 +62,7 @@ const StyledInput = styled.input`
   padding: 10px;
   border: 1px solid gray;
   border-radius: 5px;
-  margin-right: 10px; /* Ajusta el margen según tus preferencias */
+  margin-right: 10px;
 `;
 
 const StyledButton = styled.button`
@@ -73,7 +73,7 @@ const StyledButton = styled.button`
   font-weight: 600;
   border-radius: 10px;
   cursor: pointer;
-  margin-top: 10px; /* Ajusta el margen según tus preferencias */
+  margin-top: 10px;
 `;
 
 const StyledItemList = styled.div`
@@ -81,7 +81,7 @@ const StyledItemList = styled.div`
   flex-direction: column;
 
   div {
-    margin-top: 5px; /* Ajusta el margen según tus preferencias */
+    margin-top: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -116,7 +116,6 @@ const StyledTrashIcon = styled(FaTrash)`
 
 const NewProduct = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
   const [formData, setFormData] = useState({
     name: "",
     desc: "",
@@ -130,35 +129,15 @@ const NewProduct = () => {
   const [colors, setColors] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [images, setImages] = useState([]);
-  const [firebaseImageUrls, setFirebaseImageUrls] = useState([]);
 
-  const onDrop = async (acceptedFiles) => {
-    const uploadPromises = acceptedFiles.map((file) => {
-      const storageRef = ref(storage, `products/${id}/${file.name}`);
-      return uploadBytes(storageRef, file);
-    });
-
-    try {
-      const uploadedFiles = await Promise.all(uploadPromises);
-      const fileUrls = uploadedFiles.map((file) => getDownloadURL(file.ref));
-      const resolvedUrls = await Promise.all(fileUrls);
-
-      setImages([...images, ...acceptedFiles]);
-      setFirebaseImageUrls([...firebaseImageUrls, ...resolvedUrls]);
-    } catch (error) {
-      console.error("Error uploading images:", error);
-    }
+  const onDrop = (acceptedFiles) => {
+    setImages((prevImages) => [...prevImages, ...acceptedFiles]);
   };
 
   const removeImage = (index) => {
     const updatedImages = [...images];
     updatedImages.splice(index, 1);
-
-    const updatedUrls = [...firebaseImageUrls];
-    updatedUrls.splice(index, 1);
-
     setImages(updatedImages);
-    setFirebaseImageUrls(updatedUrls);
   };
 
   useEffect(() => {
@@ -185,12 +164,7 @@ const NewProduct = () => {
 
   const handleCreateProduct = async () => {
     try {
-      const lastProductResponse = await axios.get("http://localhost:5000/api/products");
-      const lastProductId = lastProductResponse.data.length;
-      let newProductId = lastProductId + 1;
-
       const productData = {
-        id: newProductId,
         name: formData.name,
         desc: formData.desc,
         category: formData.category,
@@ -199,12 +173,14 @@ const NewProduct = () => {
         price: parseFloat(formData.price),
       };
 
-      await axios.post("http://localhost:5000/api/products", productData);
+      const createdProductResponse = await axios.post("http://localhost:5000/api/products", productData);
 
-      const imageUploadPromises = images.map((file, index) => {
-        const storageRef = ref(storage, `products/${newProductId}/${index + 1}.jpg`);
-        return uploadBytes(storageRef, file);
-      });
+    const createdProductId = createdProductResponse.data._id;
+
+    const imageUploadPromises = images.map((file, index) => {
+      const storageRef = ref(storage, `products/${createdProductId}/${index + 1}.jpg`);
+      return uploadBytes(storageRef, file);
+    });
 
       await Promise.all(imageUploadPromises);
 
@@ -348,20 +324,20 @@ const NewProduct = () => {
               />
             </NewProductItem>
             <NewProductItem>
-              <NewProductItemLabel>Imágenes</NewProductItemLabel>
-              <StyledDropzone {...getRootProps()}>
-                <input {...getInputProps()} />
-                <p>Arrastra y suelta imágenes aquí o haz clic para seleccionarlas</p>
-              </StyledDropzone>
-              <div>
-                {images.map((image, index) => (
-                  <StyledImageContainer key={index}>
-                    <StyledImage src={URL.createObjectURL(image)} alt={`Imagen ${index}`} />
-                    <StyledTrashIcon onClick={() => removeImage(index)} />
-                  </StyledImageContainer>
-                ))}
-              </div>
-            </NewProductItem>
+        <NewProductItemLabel>Imágenes</NewProductItemLabel>
+        <StyledDropzone {...getRootProps()}>
+          <input {...getInputProps()} />
+          <p>Arrastra y suelta imágenes aquí o haz clic para seleccionarlas</p>
+        </StyledDropzone>
+        <div>
+          {images.map((image, index) => (
+            <StyledImageContainer key={index}>
+              <StyledImage src={URL.createObjectURL(image)} alt={`Imagen ${index}`} />
+              <StyledTrashIcon onClick={() => removeImage(index)} />
+            </StyledImageContainer>
+          ))}
+        </div>
+      </NewProductItem>
           </NewProductForm>
           <NewProductButton className="newProductButton" onClick={handleCreateProduct}>
             Guardar

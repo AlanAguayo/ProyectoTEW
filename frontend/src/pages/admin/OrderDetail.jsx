@@ -112,25 +112,6 @@ useEffect(() => {
     const columns = [
         { field: "_id", headerName: "Id", width: 240, },
         {
-            field: "image",
-            headerName: "Imagen",
-            cellRenderer: (params) => {
-                const imageUrl = params.value && params.value.length > 0 ? params.value[0] : null;
-
-                return (
-                    <div>
-                        {imageUrl && (
-                            <ProductListProduct>
-                                <ProductListImg src={imageUrl} alt="Primera Imagen" />
-                            </ProductListProduct>
-                        )}
-                    </div>
-                );
-
-            },
-            width: 100
-        },
-        {
             field: "name",
             headerName: "Nombre",
             width: 250,

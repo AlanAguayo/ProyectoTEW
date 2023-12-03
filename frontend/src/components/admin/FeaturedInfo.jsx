@@ -46,20 +46,70 @@ const FeaturedSub = styled.span`
 `;
 
 export default function FeaturedInfo() {
-  const [income, setIncome] = useState([]);
-  const [perc, setPerc] = useState(0);
+  const [userCountThisMonth, setUserCountThisMonth] = useState(0);
+  const [userCountLastMonth, setUserCountLastMonth] = useState(0);
+  const [salesAmountThisMonth, setSalesAmountThisMonth] = useState(0);
+  const [salesAmountLastMonth, setSalesAmountLastMonth] = useState(0);
+  const [orderCountThisMonth, setOrderCountThisMonth] = useState(0);
+  const [orderCountLastMonth, setOrderCountLastMonth] = useState(0);
 
   useEffect(() => {
-    const getIncome = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/orders");
-        setIncome(res.data);
-        setPerc((res.data[1].total * 100) / res.data[0].total - 100);
+        // Usuarios
+        const usersRes = await axios.get("http://localhost:5000/api/users");
+        const currentMonth = new Date().getMonth() + 1;
+        const usersThisMonth = usersRes.data.filter((user) => {
+          const registrationMonth = new Date(user.createdAt).getMonth() + 1;
+          return registrationMonth === currentMonth;
+        });
+        const usersLastMonth = usersRes.data.filter((user) => {
+          const registrationMonth = new Date(user.createdAt).getMonth() + 1;
+          return registrationMonth === currentMonth - 1;
+        });
+        setUserCountThisMonth(usersThisMonth.length);
+        setUserCountLastMonth(usersLastMonth.length);
+
+        // Ventas
+        const salesRes = await axios.get("http://localhost:5000/api/orders");
+
+        const salesThisMonth = salesRes.data.filter((sale) => {
+          const saleMonth = new Date(sale.createdAt).getMonth() + 1;
+          return saleMonth === currentMonth;
+        });
+
+        const salesLastMonth = salesRes.data.filter((sale) => {
+          const saleMonth = new Date(sale.createdAt).getMonth() + 1;
+          return saleMonth === currentMonth - 1;
+        });
+
+        const calculateTotalAmount = (sales) =>
+          sales.reduce((total, sale) => total + sale.amount, 0);
+
+        setSalesAmountThisMonth(calculateTotalAmount(salesThisMonth));
+        setSalesAmountLastMonth(calculateTotalAmount(salesLastMonth));
+
+        // Pedidos
+        const ordersRes = await axios.get("http://localhost:5000/api/orders");
+
+        const ordersThisMonth = ordersRes.data.filter((order) => {
+          const orderMonth = new Date(order.createdAt).getMonth() + 1;
+          return orderMonth === currentMonth;
+        });
+
+        const ordersLastMonth = ordersRes.data.filter((order) => {
+          const orderMonth = new Date(order.createdAt).getMonth() + 1;
+          return orderMonth === currentMonth - 1;
+        });
+
+        setOrderCountThisMonth(ordersThisMonth.length);
+        setOrderCountLastMonth(ordersLastMonth.length);
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-    getIncome();
+    fetchData();
   }, []);
 
   return (
@@ -67,10 +117,10 @@ export default function FeaturedInfo() {
       <FeaturedItem>
         <FeaturedTitle>Usuarios</FeaturedTitle>
         <FeaturedMoneyContainer>
-          <FeaturedMoney>${income[1]?.total}</FeaturedMoney>
+          <FeaturedMoney>{userCountThisMonth}</FeaturedMoney>
           <FeaturedMoneyRate>
-            %{Math.floor(perc)}{" "}
-            {perc < 0 ? (
+            {userCountThisMonth - userCountLastMonth}{" "}
+            {userCountThisMonth - userCountLastMonth < 0 ? (
               <FaArrowLeft
                 style={{ fontSize: "14px", marginLeft: "5px", color: "red" }}
               />
@@ -83,16 +133,21 @@ export default function FeaturedInfo() {
         </FeaturedMoneyContainer>
         <FeaturedSub>Comparado al mes pasado</FeaturedSub>
       </FeaturedItem>
-      {/* Puedes copiar y pegar este bloque para los otros dos items */}
       <FeaturedItem>
         <FeaturedTitle>Ventas</FeaturedTitle>
         <FeaturedMoneyContainer>
-          <FeaturedMoney>$0</FeaturedMoney>
+          <FeaturedMoney>${salesAmountThisMonth}</FeaturedMoney>
           <FeaturedMoneyRate>
-            -1.4{" "}
-            <FaArrowLeft
-              style={{ fontSize: "14px", marginLeft: "5px", color: "red" }}
-            />
+            {salesAmountThisMonth - salesAmountLastMonth}{" "}
+            {salesAmountThisMonth - salesAmountLastMonth < 0 ? (
+              <FaArrowLeft
+                style={{ fontSize: "14px", marginLeft: "5px", color: "red" }}
+              />
+            ) : (
+              <FaArrowRight
+                style={{ fontSize: "14px", marginLeft: "5px", color: "green" }}
+              />
+            )}
           </FeaturedMoneyRate>
         </FeaturedMoneyContainer>
         <FeaturedSub>Comparado al mes pasado</FeaturedSub>
@@ -100,15 +155,21 @@ export default function FeaturedInfo() {
       <FeaturedItem>
         <FeaturedTitle>Pedidos</FeaturedTitle>
         <FeaturedMoneyContainer>
-          <FeaturedMoney>$0</FeaturedMoney>
+          <FeaturedMoney>{orderCountThisMonth}</FeaturedMoney>
           <FeaturedMoneyRate>
-            $0{" "}
-            <FaArrowRight
-              style={{ fontSize: "14px", marginLeft: "5px", color: "green" }}
-            />
+            {orderCountThisMonth - orderCountLastMonth}{" "}
+            {orderCountThisMonth - orderCountLastMonth < 0 ? (
+              <FaArrowLeft
+                style={{ fontSize: "14px", marginLeft: "5px", color: "red" }}
+              />
+            ) : (
+              <FaArrowRight
+                style={{ fontSize: "14px", marginLeft: "5px", color: "green" }}
+              />
+            )}
           </FeaturedMoneyRate>
         </FeaturedMoneyContainer>
-        <FeaturedSub>Comparado por mes</FeaturedSub>
+        <FeaturedSub>Comparado al mes pasado</FeaturedSub>
       </FeaturedItem>
     </Featured>
   );

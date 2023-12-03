@@ -13,7 +13,7 @@ const save = async (req, res) => {
 };
 
   //UPDATE
-const update = async (req, res) => {
+  const update = async (req, res) => {
     try {
         const updatedProduct = await Product.findByIdAndUpdate(
           req.params.id,
@@ -23,7 +23,7 @@ const update = async (req, res) => {
           { new: true }
         );
         console.log('Producto actualizado:', updatedProduct);
-        if (!updatedCategory) {
+        if (!updatedProduct) { // Cambié de updatedCategory a updatedProduct aquí
             return res.status(404).json({ error: 'Producto no Encontrado' });
         }
         res.status(200).json(updatedProduct);
@@ -31,6 +31,7 @@ const update = async (req, res) => {
         res.status(500).json(err);
     }
 };
+
   
   //DELETE
 const drop = async (req, res) => {

@@ -1,6 +1,6 @@
 import React from "react";
-import { FaBell, FaLanguage, FaCog } from 'react-icons/fa';
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
 width: 100%;
@@ -26,38 +26,14 @@ font-weight: bold;
   cursor: pointer;
 `;
 
-const TopRight = styled.div`
-display: flex;
-    align-items: center;
-`;
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
 
-const TopBarIconContainer = styled.div`
-position: relative;
-  cursor: pointer;
-  margin-right: 10px;
-  color: #555;
-`;
-
-const TopIconBadge = styled.span`
-width: 15px;
-    height: 15px;
-    position: absolute;
-    top: -5px;
-    right: 0px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-`;
-
-const TopAvatar = styled.img`
-width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
+  &:hover {
+    text-decoration: none;
+    color: inherit;
+  }
 `;
 
 export default function Topbar() {
@@ -65,7 +41,9 @@ export default function Topbar() {
     <Container>
       <TopbarWrapper>
         <div>
+          <StyledLink to="/admin">
           <Logo>Lincestore</Logo>
+          </StyledLink>
         </div>
       </TopbarWrapper>
     </Container>
