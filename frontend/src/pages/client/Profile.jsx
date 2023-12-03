@@ -234,8 +234,9 @@ export default function Profile() {
   
   return (
     <>
+    <Announcement />
     <Navbar />
-      <Announcement />
+      
     <User>
       <UserTitleContainer>
         <h1>Perfil</h1>
