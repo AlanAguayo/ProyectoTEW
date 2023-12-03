@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '../redux/userReduxAdmin';
-import { createToken } from "../authUtils";
+import { createToken, redirect } from "../authUtils";
 
 const Container = styled.div`
   width: 100vw;
@@ -104,7 +104,7 @@ const Login = () => {
         createToken(accessToken);
 
         dispatch(loginSuccess(formData));
-        navigate('/profile');
+        redirect(navigate);
       } else {
         dispatch(loginFailure());
       }
