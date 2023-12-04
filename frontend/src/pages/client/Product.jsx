@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Announcement from "../../components/client/Announcement";
 import axios from 'axios';
-import { getToken } from "../../authUtils";
+import { checkAuth, getToken } from "../../authUtils";
 import { useNavigate } from 'react-router-dom';
 import { addProduct } from "../../redux/cartRedux";
 import { useDispatch } from "react-redux";
@@ -118,7 +118,14 @@ const FilterSizeButton = styled.button`
 
 
 const Product = () => {
+  const id = localStorage.getItem('id');
   const token = getToken();
+
+  const [cart, setCart] = useState([]);
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -130,11 +137,22 @@ const Product = () => {
   const [error, setError] = useState("");
 
   const idProducto = location.pathname.split("/")[2];
-  const idUser = localStorage.getItem('id');
 
   useEffect(() => {
+    checkAuth(navigate);
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/carts/${id}`,{headers});
+        setCart(response.data);
+        
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
+    };
+
+    fetchCart();
     getData();
-  }, [navigate]);
+  }, [id], [navigate]);
 
   const getData = async () => {
     try {
@@ -154,38 +172,24 @@ const Product = () => {
     if (color != '' && size != '') {
       setError('');
       try {
-        const response = await axios.post(`http://${ip}:5000/api/carts`,
-          {
-            userId: idUser,
-            products: [
-              {
-                productId: idProducto,
-                name: data.name,
-                quantity: quantity,
-                color: color,
-                size: size, 
-              },
-            ],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+        const updatedCart = { ...cart };
+        const newProduct = {
+          productId: idProducto,
+          quantity: 1,
+        };
+        updatedCart.products.push(newProduct);
+        const response = await axios.put(
+          `http://${ip}:5000/api/carts/${cart._id}`,
+          updatedCart,
+          {headers}
         );
-        console.log('Producto agregado al carrito:', response.data);
-        dispatch(
-          addProduct({ ...data, quantity, color, size })
-        );
+        setCart(response.data);
+        navigate("/cart");
       } catch (error) {
         console.error("Error:", error);
     
         if (error.response) {
           console.error("Response data:", error.response.data);
-
-          if (error.response.status === 409) {
-            navigate("/login");
-          }
         }
       }
     }else{
