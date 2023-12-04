@@ -1,10 +1,12 @@
 import {
-  FaHeart,
   FaSearch, 
   FaShoppingCart
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { getToken } from "../../authUtils";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const Info = styled.div`
   opacity: 0;
@@ -74,27 +76,82 @@ const Name = styled.div`
   margin-top: 10px;
 `;
 
+
+
 const Product = ({ item }) => {
+
+  const id = localStorage.getItem('id');
+  const token = getToken();
+
+  const [cart, setCart] = useState([]);
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
+
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/carts/${id}`, { headers });
+        setCart(response.data);
+        
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
+    };
+
+    fetchCart();
+  }, [id]);
+
+  
+  const AddCart = async () => {
+    try {
+      const updatedCart = { ...cart };
+  
+      // Create a new product object for the added item
+      const newProduct = {
+        productId: item._id,
+        quantity: 1,
+      };
+  
+      // Add the new product to the products array
+      updatedCart.products.push(newProduct);
+  
+      // Make the API request to update the cart
+      const response = await axios.put(
+        `http://localhost:5000/api/carts/${cart._id}`,
+        updatedCart,
+        { headers }
+      );
+  
+      // Update the state with the response data
+      setCart(response.data);
+    } catch (error) {
+      console.error("Error al actualizar:", error);
+    }
+  };
+  
   return (
     <Container>
       <Circle />
       <Image src={"https://firebasestorage.googleapis.com/v0/b/proyectotew-d69b0.appspot.com/o/products%2F"+item._id+"%2F1.jpg?alt=media"} />
       <Name>{item.name}</Name>
       <Info>
-        <Icon>
+        <Icon onClick={AddCart}>
+          
           <FaShoppingCart />
         </Icon>
+        
         <Icon>
           <Link to={`/product/${item._id}`}>
-          <FaSearch />
+            <FaSearch />
           </Link>
-        </Icon>
-        <Icon>
-          <FaHeart />
         </Icon>
       </Info>
     </Container>
   );
+
 };
 
 export default Product;
