@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
-import { checkAuth, getToken } from "../../authUtils";
-import { useEffect } from "react";
+import { getToken } from "../../authUtils";
 
 
 const Container = styled.div`
