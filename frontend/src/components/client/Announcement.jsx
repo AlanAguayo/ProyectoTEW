@@ -12,7 +12,7 @@ const Container = styled.div`
 `;
 
 const Announcement = () => {
-  return <Container>Obten un 10% de descuento con el cupo TEW</Container>;
+  return <Container>Obten un 10% de descuento con el cupón TEW</Container>;
 };
 
 export default Announcement;

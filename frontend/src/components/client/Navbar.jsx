@@ -82,6 +82,7 @@ const StyledLink = styled(Link)`
 
 const Navbar = () => {
   const quantity = useSelector(state => state.cart.quantity)
+  var Name = localStorage.getItem("name");
   return (
     <Container>
       <Wrapper>
@@ -97,20 +98,36 @@ const Navbar = () => {
           </StyledLink>
         </Center>
         <Right>
-        <StyledLink to="/register">
-          <MenuItem>Registrarse</MenuItem>
-        </StyledLink>
-        <StyledLink to="/login">
-          <MenuItem>Iniciar sesion</MenuItem>
-          </StyledLink>
-          <Link to="/cart">
-            <MenuItem>
-              <div style={{ marginTop: '12px' }}>
-                <FaShoppingCart />
-                <Badge>{quantity === 0 ? "" : quantity}</Badge>
-              </div>
-            </MenuItem>
-          </Link>
+          {Name?
+          (
+            <>
+              <StyledLink to="/Profile">
+                <MenuItem>Hola, {Name}.</MenuItem>
+              </StyledLink>
+            </>
+          )
+          :
+          (
+            <>
+              <StyledLink to="/register">
+                <MenuItem>Registrarse</MenuItem>
+              </StyledLink>
+              <StyledLink to="/login">
+                <MenuItem>Iniciar sesion</MenuItem>
+              </StyledLink>
+              <Link to="/cart">
+                <MenuItem>
+                  <div style={{ marginTop: '12px' }}>
+                    <FaShoppingCart />
+                    <Badge>{quantity === 0 ? "" : quantity}</Badge>
+                  </div>
+                </MenuItem>
+              </Link>
+            </>
+          
+          )
+          }
+          
         </Right>
       </Wrapper>
     </Container>
