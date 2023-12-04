@@ -4,10 +4,12 @@ import Footer from "../../components/client/Footer";
 import Navbar from "../../components/client/Navbar";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { publicRequest } from "../../requestMethods";
+import Announcement from "../../components/client/Announcement";
+import axios from 'axios';
+import { getToken } from "../../authUtils";
+import { useNavigate } from 'react-router-dom';
 import { addProduct } from "../../redux/cartRedux";
 import { useDispatch } from "react-redux";
-import Announcement from "../../components/client/Announcement";
 
 const Container = styled.div``;
 
@@ -70,15 +72,6 @@ const FilterColor = styled.div`
   cursor: pointer;
 `;
 
-const FilterSize = styled.select`
-  margin-left: 10px;
-  padding: 5px;
-`;
-
-const FilterSizeOption = styled.option``;
-
-const FilterColorOption = styled.option``;
-
 const AddContainer = styled.div`
   width: 50%;
   display: flex;
@@ -115,24 +108,89 @@ const Button = styled.button`
   }
 `;
 
+const FilterSizeButton = styled.button`
+  margin-left: 10px;
+  padding: 5px;
+  cursor: pointer;
+`;
+
+
+
 const Product = () => {
+  const token = getToken();
+  const navigate = useNavigate();
   const location = useLocation();
-  const id = location.pathname.split("/")[2];
-  const [product, setProduct] = useState({});
+  const dispatch = useDispatch();
+
+  const [data, setData] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
-  const dispatch = useDispatch();
+  const [error, setError] = useState("");
+
+  const idProducto = location.pathname.split("/")[2];
+  const idUser = localStorage.getItem('id');
 
   useEffect(() => {
-    const getProduct = async () => {
+    getData();
+  }, [navigate]);
+
+  const getData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/products/${idProducto}`
+      );
+      setData(response.data); 
+    } catch (error) {
+      console.error("Error:", error);
+  
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+      }
+    }
+  }
+
+  const postData = async () => {
+    if (color != '' && size != '') {
+      setError('');
       try {
-        const res = await publicRequest.get("/products/find/" + id);
-        setProduct(res.data);
-      } catch {}
-    };
-    getProduct();
-  }, [id]);
+        const response = await axios.post(`http://localhost:5000/api/carts`,
+          {
+            userId: idUser,
+            products: [
+              {
+                productId: idProducto,
+                name: data.name,
+                quantity: quantity,
+                color: color,
+                size: size, 
+              },
+            ],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log('Producto agregado al carrito:', response.data);
+        dispatch(
+          addProduct({ ...data, quantity, color, size })
+        );
+      } catch (error) {
+        console.error("Error:", error);
+    
+        if (error.response) {
+          console.error("Response data:", error.response.data);
+
+          if (error.response.status === 409) {
+            navigate("/login");
+          }
+        }
+      }
+    }else{
+      setError("Seleccione un tamaño y color");
+    }
+  }
 
   const handleQuantity = (type) => {
     if (type === "dec") {
@@ -142,42 +200,44 @@ const Product = () => {
     }
   };
 
-  const handleClick = () => {
-    dispatch(
-      addProduct({ ...product, quantity, color, size })
-    );
+  const handleColorChange = (selectedColor) => {
+    setError('');
+    setColor(selectedColor);
   };
+
+  const handleSizeChange = (selectedSize) => {
+    setError('');
+    setSize(selectedSize);
+  };
+
   return (
     <Container>
       <Announcement/>
       <Navbar />
       <Wrapper>
         <ImgContainer>
-          <Image src={product.img} />
+          <Image src={data?.img} alt="Producto" />
         </ImgContainer>
         <InfoContainer>
-          <Title>{product.title}</Title>
-          <Desc>{product.desc}</Desc>
-          <Price>$ {product.price}</Price>
+          <Title>{data?.name}.</Title>
+          <Desc>{data?.desc}.</Desc>
+          <Price>$ {data?.price}.</Price>
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
-              <FilterColor onChange={(e) => setColor(e.target.value)}>
-              {product.color?.map((c) => (
-                <FilterColorOption color={c} key={c} onClick={() => setColor(c)}>
-                  {c}
-                </FilterColorOption>
-                
+              {data.color?.map((s) => (
+                <FilterSizeButton key={s} onClick={() => handleColorChange(s)}>
+                  {s}
+                </FilterSizeButton>
               ))}
-              </FilterColor>
             </Filter>
             <Filter>
               <FilterTitle>Tamaño</FilterTitle>
-              <FilterSize onChange={(e) => setSize(e.target.value)}>
-                {product.size?.map((s) => (
-                  <FilterSizeOption key={s}>{s}</FilterSizeOption>
-                ))}
-              </FilterSize>
+              {data.size?.map((s) => (
+                <FilterSizeButton key={s} onClick={() => handleSizeChange(s)}>
+                  {s}
+                </FilterSizeButton>
+              ))}
             </Filter>
           </FilterContainer>
           <AddContainer>
@@ -185,9 +245,10 @@ const Product = () => {
               <FaMinus onClick={() => handleQuantity("dec")} />
               <Amount>{quantity}</Amount>
               <FaPlus onClick={() => handleQuantity("inc")} />
-            </AmountContainer>
-            <Button onClick={handleClick}>AGREGAR AL CARRITO</Button>
+            </AmountContainer>            
+            <Button onClick={postData}>AGREGAR AL CARRITO</Button>
           </AddContainer>
+          {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
         </InfoContainer>
       </Wrapper>
       <Footer />

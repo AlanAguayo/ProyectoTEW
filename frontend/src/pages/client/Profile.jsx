@@ -206,17 +206,7 @@ export default function Profile() {
   }, [navigate]);
   
   const handleUpdate = async () => {    
-    try {
-      console.log("FormData:", formData);
-
-      if(image==null){
-        
-      }else{
-        const imageRef = ref(storage, `users/${id}.jpg`)
-        uploadBytes(imageRef, image);
-        localStorage.setItem('img', imagePreview);
-      }
-
+    try {      
       const response = await fetch(`http://localhost:5000/api/users/${id}`, {
         method: "PUT",
         headers: {
@@ -225,6 +215,8 @@ export default function Profile() {
         },
         body: JSON.stringify(formData),
       });
+
+      console.log(response);
   
       if (response.ok) {
         console.log("Actualización exitosa");
@@ -238,8 +230,6 @@ export default function Profile() {
         localStorage.setItem('city', formData.city);
         localStorage.setItem('state', formData.state);
         localStorage.setItem('cp', formData.cp);
-
-        navigate("/profile");
       } else {
         console.error("Error en la actualización:", response.statusText);
       }

@@ -69,7 +69,7 @@ const ProductList = () => {
             <Option>XS</Option>
             <Option>S</Option>
             <Option>M</Option>
-            <Option>L</Option>
+            <Option>G</Option>
             <Option>XL</Option>
           </Select>
         </Filter>
