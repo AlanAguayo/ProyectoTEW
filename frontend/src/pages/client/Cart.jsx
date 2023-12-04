@@ -14,134 +14,134 @@ const KEY = "pk_test_51OCoZuDUnbodT6MUcaAYA4vkMIDwLCZglQXOMke3TVs4XNgBSwlorUlX9j
 const Container = styled.div``;
 
 const Wrapper = styled.div`
-  padding: 20px;
-`;
+    padding: 20px;
+  `;
 
 const Title = styled.h1`
-  font-weight: 300;
-  text-align: center;
-`;
+    font-weight: 300;
+    text-align: center;
+  `;
 
 const Top = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px;
-`;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+  `;
 
 const Bottom = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
+    display: flex;
+    justify-content: space-between;
+  `;
 
 const Info = styled.div`
-  flex: 3;
-`;
+    flex: 3;
+  `;
 
 const Product = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding-top:10px;
-`;
+    display: flex;
+    justify-content: space-between;
+    padding-top:10px;
+  `;
 
 const ProductDetail = styled.div`
-  flex: 2;
-  display: flex;
-`;
+    flex: 2;
+    display: flex;
+  `;
 
 const Image = styled.img`
-  width: 100%;
-  max-width: 100px;
-  height: auto;
-`;
+    width: 100%;
+    max-width: 100px;
+    height: auto;
+  `;
 
 const Details = styled.div`
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-`;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  `;
 
 const ProductName = styled.span``;
 
 const PriceDetail = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  `;
 
 const ProductAmountContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-`;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  `;
 
 const CouponInput = styled.input`
-  border: none;
-  height: 30px;
-  border-bottom: 1px solid gray;
-`;
+    border: none;
+    height: 30px;
+    border-bottom: 1px solid gray;
+  `;
 
 const CouponButton = styled.button`
-  background-color: black;
-  color: white;
-  font-weight: 600;
-`;
+    background-color: black;
+    color: white;
+    font-weight: 600;
+  `;
 const ProductAmount = styled.div`
-  font-size: 24px;
-  margin: 5px;
-`;
+    font-size: 24px;
+    margin: 5px;
+  `;
 
 const ProductPrice = styled.div`
-  font-size: 30px;
-  font-weight: 200;
-`;
+    font-size: 30px;
+    font-weight: 200;
+  `;
 
 const Hr = styled.hr`
-  background-color: #eee;
-  border: none;
-  height: 1px;
-`;
+    background-color: #eee;
+    border: none;
+    height: 1px;
+  `;
 
 const Summary = styled.div`
-  flex: 1;
-  border: 0.5px solid lightgray;
-  border-radius: 10px;
-  padding: 20px;
-  height: 6 0vh;
-`;
+    flex: 1;
+    border: 0.5px solid lightgray;
+    border-radius: 10px;
+    padding: 20px;
+    height: 6 0vh;
+  `;
 
 const SummaryTitle = styled.h1`
-  font-weight: 200;
-`;
+    font-weight: 200;
+  `;
 
 const SummaryItem = styled.div`
-  margin: 30px 0px;
-  display: flex;
-  justify-content: space-between;
-  font-weight: ${(props) => props.type === "total" && "500"};
-  font-size: ${(props) => props.type === "total" && "24px"};
-`;
+    margin: 30px 0px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: ${(props) => props.type === "total" && "500"};
+    font-size: ${(props) => props.type === "total" && "24px"};
+  `;
 
 const DeleteIcon = styled(FaTrash)`
-  cursor: pointer;
-  margin-right: 10px;
-  margin-top: 50px;
-`;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 50px;
+  `;
 
 const SummaryItemText = styled.span``;
 
 const SummaryItemPrice = styled.span``;
 
 const Button = styled.button`
-  width: 100%;
-  padding: 10px;
-  background-color: black;
-  color: white;
-  font-weight: 600;
-`;
+    width: 100%;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    font-weight: 600;
+  `;
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
@@ -151,29 +151,32 @@ const Cart = () => {
   const token = getToken();
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [appliedCouponId, setAppliedCouponId] = useState(null);
 
   const headers = {
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json',
   };
 
+  const fetchCart = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/carts/${id}`, { headers });
+      setCart(response.data);
+      const productDetailsPromises = response.data.products.map(async (product) => {
+        const productResponse = await axios.get(`http://localhost:5000/api/products/${product.productId}`, { headers });
+        return productResponse.data;
+      });
+
+      const productDetails = await Promise.all(productDetailsPromises);
+      setProductsDetails(productDetails);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+    }
+  };
+
   useEffect(() => {
     checkAuth(navigate);
-    const fetchCart = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/carts/${id}`, { headers });
-        setCart(response.data);
-        const productDetailsPromises = response.data.products.map(async (product) => {
-          const productResponse = await axios.get(`http://localhost:5000/api/products/${product.productId}`, { headers });
-          return productResponse.data;
-        });
 
-        const productDetails = await Promise.all(productDetailsPromises);
-        setProductsDetails(productDetails);
-      } catch (error) {
-        console.error("Error fetching cart:", error);
-      }
-    };
 
     fetchCart();
   }, [id, navigate]);
@@ -183,7 +186,7 @@ const Cart = () => {
       const productIndex = cart.products.findIndex((product) => product.productId === productId);
 
       const updatedCart = { ...cart };
-      
+
       updatedCart.products[productIndex].quantity += 1;
 
       const response = await axios.put(
@@ -231,13 +234,14 @@ const Cart = () => {
 
       updatedCart.products = updatedCart.products.filter(product => product.productId !== productId);
 
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:5000/api/carts/${cart._id}`,
         updatedCart,
         { headers }
       );
 
-      setCart(updatedCart);
+      fetchCart();
+
 
     } catch (error) {
       console.error("Error al eliminar el producto:", error);
@@ -247,7 +251,7 @@ const Cart = () => {
 
   const subtotal = productsDetails.reduce((acc, productDetail, index) => {
     const productPrice = productDetail.price;
-    const productQuantity = cart.products[index].quantity;
+    const productQuantity = cart.products[index]?.quantity || 0;
     return acc + productPrice * productQuantity;
   }, 0);
 
@@ -258,6 +262,7 @@ const Cart = () => {
 
       if (foundCoupon) {
         setDiscount(foundCoupon.discount);
+        setAppliedCouponId(foundCoupon._id);
       } else {
         console.error("Cupón no válido");
       }
@@ -270,7 +275,30 @@ const Cart = () => {
     setCoupon(e.target.value);
   };
 
-  const total = (subtotal-(subtotal * discount) + 59.99);
+  const total = (subtotal - (subtotal * discount) + 59.99);
+
+  const handleCheckout = async (token) => {
+    try {
+      const orderData = {
+        userId: localStorage.getItem('id'),
+        products: cart.products,
+        amount: total,
+        address: token.card.address_line1,
+        status: 'Completado',
+        coupon: appliedCouponId,
+      };
+
+      const response = await axios.post('http://localhost:5000/api/orders', orderData, { headers });
+
+      await axios.put(`http://localhost:5000/api/carts/${cart._id}`, { products: [] }, { headers });
+
+      fetchCart();
+
+      navigate('/orders/'+response.data._id);
+    } catch (error) {
+      console.error('Error al realizar el pedido:', error);
+    }
+  };
 
   return (
     <Container>
@@ -282,7 +310,7 @@ const Cart = () => {
         <Bottom>
           <Info>
             {productsDetails.map((productDetail, index) => (
-              <Product key={cart.products[index].idProducto}>
+              <Product key={cart.products[index]?.idProducto || 0}>
                 <ProductDetail>
                   <Image src={"https://firebasestorage.googleapis.com/v0/b/proyectotew-d69b0.appspot.com/o/products%2F" + productDetail._id + "%2F1.jpg?alt=media&token=5494075e-addc-4a20-9845-5506773a520c"} />
                   <Details>
@@ -299,17 +327,17 @@ const Cart = () => {
                 </ProductDetail>
                 <PriceDetail>
                   <ProductPrice>
-                    $ {(productDetail.price * cart.products[index].quantity).toFixed(2)}
+                    $ {(productDetail.price * cart.products[index]?.quantity).toFixed(2) || 0}
                   </ProductPrice>
                   <ProductAmountContainer>
                     <FaPlus onClick={() => handleIncrement(productDetail._id)} />
-                    <ProductAmount>{cart.products[index].quantity}</ProductAmount>
-                    {cart.products[index].quantity !== 1 && 
-                    <FaMinus onClick={() => handleDecrement(productDetail._id)}/>
-                  }
+                    <ProductAmount>{cart.products[index]?.quantity || 0}</ProductAmount>
+                    {cart.products[index]?.quantity !== 1 &&
+                      <FaMinus onClick={() => handleDecrement(productDetail._id)} />
+                    }
                   </ProductAmountContainer>
                 </PriceDetail>
-                <DeleteIcon onClick={() => handleDelete(productDetail._id)}/>
+                <DeleteIcon onClick={() => handleDelete(productDetail._id)} />
               </Product>
             ))}
             <Hr />
@@ -352,6 +380,9 @@ const Cart = () => {
               description={`Total a pagar: $${total.toFixed(2)}`}
               amount={(total * 100).toFixed(0)}
               stripeKey={KEY}
+              token={handleCheckout}
+              currency="MX"
+              email={localStorage.getItem('email')}
             >
               <Button>Comprar ahora</Button>
             </StripeCheckout>
