@@ -13,6 +13,7 @@
     "axios": "^1.6.2",
     "crypto": "^1.0.1",
     "crypto-browserify": "^3.12.0",
+    "date-fns": "^2.30.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-jwt": "^8.4.1",
