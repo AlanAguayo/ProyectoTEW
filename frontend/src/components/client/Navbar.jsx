@@ -105,14 +105,6 @@ const Navbar = () => {
           </StyledLink>
         </Center>
         <Right>
-        <Link to="/cart">
-          <MenuItem>
-            <div style={{ marginTop: '12px' }}>
-              <FaShoppingCart />
-              <Badge>{quantity === 0 ? "" : quantity}</Badge>
-            </div>
-          </MenuItem>
-        </Link>
           {Name?
           (
             <>
@@ -140,7 +132,14 @@ const Navbar = () => {
           
           )
           }
-          
+          <Link to="/cart">
+          <MenuItem>
+            <div style={{ marginTop: '12px' }}>
+              <FaShoppingCart />
+              <Badge>{quantity === 0 ? "" : quantity}</Badge>
+            </div>
+          </MenuItem>
+        </Link>
         </Right>
       </Wrapper>
     </Container>
