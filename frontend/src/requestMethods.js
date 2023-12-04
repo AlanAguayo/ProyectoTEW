@@ -1,6 +1,7 @@
 import axios from "axios";
+import { ip } from './constants.js';
 
-const BASE_URL = "http://localhost:5000/api/";
+const BASE_URL = "http://"+ip+":5000/api/";
 
 const user = JSON.parse(localStorage.getItem("persist:root"))?.user;
 const currentUser = user && JSON.parse(user).currentUser;
