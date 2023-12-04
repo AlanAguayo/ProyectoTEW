@@ -9,7 +9,7 @@ const Container = styled.div`
       rgba(255, 255, 255, 0.5),
       rgba(255, 255, 255, 0.5)
     ),
-    url("https://png.pngtree.com/thumb_back/fh260/background/20210207/pngtree-gray-solid-color-simple-background-image_557028.jpg")
+    url("https://proyectotew.s3.amazonaws.com/2023-12-03_20-51.png")
       center;
   background-size: cover;
   display: flex;

@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   FaLocationArrow,
-  FaMailBulk,
   FaUser,
   FaPhone,
   FaUpload,
@@ -14,7 +13,6 @@ import Navbar from "../../components/client/Navbar";
 import Announcement from "../../components/client/Announcement";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Button } from "react-bootstrap";
 import { checkAuth, getToken } from "../../authUtils";
 import { ref, uploadBytes } from 'firebase/storage';
 import { storage } from "../../firebase"
@@ -28,17 +26,6 @@ const UserTitleContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-
-const UserAddButton = styled.div`
-  width: 80px;
-  border: none;
-  padding: 5px;
-  background-color: teal;
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
-  font-size: 16px;
 `;
 
 const UserContainer = styled.div`

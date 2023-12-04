@@ -1,4 +1,4 @@
-import { FaPlus , FaMinus, FaTrash } from "react-icons/fa";
+import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Announcement from "../../components/client/Announcement";
@@ -7,7 +7,9 @@ import Navbar from "../../components/client/Navbar";
 import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { userRequest } from "../../requestMethods";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { checkAuth, getToken } from "../../authUtils";
+import axios from "axios";
 
 const KEY = "pk_test_51OCoZuDUnbodT6MUcaAYA4vkMIDwLCZglQXOMke3TVs4XNgBSwlorUlX9jOdBP20reowO3kEqYmJ2cTQWc1YsLAM00G7vneRLS";
 
@@ -60,6 +62,7 @@ const Info = styled.div`
 const Product = styled.div`
   display: flex;
   justify-content: space-between;
+  padding-top:10px;
 `;
 
 const ProductDetail = styled.div`
@@ -68,7 +71,9 @@ const ProductDetail = styled.div`
 `;
 
 const Image = styled.img`
-  width: 200px;
+  width: 100%;
+  max-width: 100px;
+  height: auto;
 `;
 
 const Details = styled.div`
@@ -171,65 +176,103 @@ const Button = styled.button`
 `;
 
 const Cart = () => {
-  const cart = useSelector((state) => state.cart);
-  const [stripeToken, setStripeToken] = useState(null);
-  const history = useNavigate();
+  const [cart, setCart] = useState([]);
+  const [productsDetails, setProductsDetails] = useState([]);
+  const navigate = useNavigate();
+  const id = localStorage.getItem('id');
+  const token = getToken();
+  const [coupon, setCoupon] = useState("");
+  const [discount, setDiscount] = useState(0);
 
-  const onToken = (token) => {
-    setStripeToken(token);
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
   };
 
   useEffect(() => {
-    const makeRequest = async () => {
+    checkAuth(navigate);
+    const fetchCart = async () => {
       try {
-        const res = await userRequest.post("/checkout/payment", {
-          tokenId: stripeToken.id,
-          amount: 500,
+        const response = await axios.get(`http://localhost:5000/api/carts/${id}`, { headers });
+        setCart(response.data);
+        const productDetailsPromises = response.data.products.map(async (product) => {
+          const productResponse = await axios.get(`http://localhost:5000/api/products/${product.productId}`, { headers });
+          return productResponse.data;
         });
-        history.push("/success", {
-          stripeData: res.data,
-          products: cart, });
-      } catch {}
+
+        const productDetails = await Promise.all(productDetailsPromises);
+        setProductsDetails(productDetails);
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
     };
-    stripeToken && makeRequest();
-  }, [stripeToken, cart.total, history]);
+
+    fetchCart();
+  }, [id, navigate]);
+
+  const subtotal = productsDetails.reduce((acc, productDetail, index) => {
+    const productPrice = productDetail.price;
+    const productQuantity = cart.products[index].quantity;
+    return acc + productPrice * productQuantity;
+  }, 0);
+
+  const applyCoupon = async () => {
+    try {
+      const couponResponse = await axios.get("http://localhost:5000/api/coupons", { headers });
+      const foundCoupon = couponResponse.data.find(c => c.code === coupon);
+
+      if (foundCoupon) {
+        setDiscount(foundCoupon.discount);
+      } else {
+        console.error("Cupón no válido");
+      }
+    } catch (error) {
+      console.error("Error al obtener cupones:", error);
+    }
+  };
+
+  const handleCouponChange = (e) => {
+    setCoupon(e.target.value);
+  };
+
+  const total = (subtotal-(subtotal * discount) + 59.99);
+
   return (
     <Container>
       <Announcement />
-
       <Navbar />
       <Wrapper>
         <Title>Carrito</Title>
-        <Top/>
+        <Top />
         <Bottom>
           <Info>
-            {cart.products.map((product) => (
-              <Product>
+            {productsDetails.map((productDetail, index) => (
+              <Product key={cart.products[index].idProducto}>
                 <ProductDetail>
-                  <Image src={product.img} />
+                  <Image src={"https://firebasestorage.googleapis.com/v0/b/proyectotew-d69b0.appspot.com/o/products%2F" + productDetail._id + "%2F1.jpg?alt=media&token=5494075e-addc-4a20-9845-5506773a520c"} />
                   <Details>
                     <ProductName>
-                      <b>Producto:</b> {product.name}
+                      <b>Producto:</b> {productDetail.name}
                     </ProductName>
-                    <ProductColor color={product.color}>
-                      <b>Color:</b>  {product.color}
-                    </ProductColor>
-                    <ProductSize>
-                      <b>Tamaño:</b> {product.size}
-                    </ProductSize>
+                    <ProductName>
+                      <b>Descripcion:</b> {productDetail.desc}
+                    </ProductName>
+                    <ProductName>
+                      <b>Precio:</b> {productDetail.price}
+                    </ProductName>
                   </Details>
                 </ProductDetail>
                 <PriceDetail>
+                  <ProductPrice>
+                    $ {productDetail.price * cart.products[index].quantity}
+                  </ProductPrice>
                   <ProductAmountContainer>
                     <FaPlus />
-                    <ProductAmount>{product.quantity}</ProductAmount>
+                    <ProductAmount>{cart.products[index].quantity}</ProductAmount>
                     <FaMinus />
                   </ProductAmountContainer>
-                  <ProductPrice>
-                    $ {product.price * product.quantity}
-                  </ProductPrice>
                 </PriceDetail>
-                <DeleteIcon/>
+                <DeleteIcon />
               </Product>
             ))}
             <Hr />
@@ -238,35 +281,39 @@ const Cart = () => {
             <SummaryTitle>Orden</SummaryTitle>
             <SummaryItem>
               <SummaryItemText>Subtotal</SummaryItemText>
-              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
+              <SummaryItemPrice>$ {subtotal}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Envio</SummaryItemText>
-              <SummaryItemPrice>$ 1.90</SummaryItemPrice>
+              <SummaryItemPrice>$ 59.99</SummaryItemPrice>
             </SummaryItem>
+            {discount !== 0 && (
+
+              <SummaryItem>
+                <SummaryItemText>Descuento</SummaryItemText>
+                <SummaryItemPrice>{discount * 100} %</SummaryItemPrice>
+              </SummaryItem>
+            )}
             <SummaryItem>
-              <SummaryItemText>Descuento</SummaryItemText>
-              <SummaryItemPrice>$ -3.90</SummaryItemPrice>
+              <SummaryItemText style={{ marginTop: '10px' }}>Cupon</SummaryItemText>
+              <CouponInput
+                type="text"
+                placeholder="Ingresa tu cupon"
+                value={coupon}
+                onChange={handleCouponChange}
+              />
+              <CouponButton onClick={applyCoupon}>Aplicar</CouponButton>
             </SummaryItem>
-            <SummaryItem>
-            <SummaryItemText style={{marginTop: '10px'}}>Cupon</SummaryItemText>
-                <CouponInput
-                  type="text"
-                  placeholder="Ingresa tu cupon"
-                />
-                <CouponButton>Aplicar</CouponButton>  
-                </SummaryItem>            
             <SummaryItem type="total">
               <SummaryItemText>Total</SummaryItemText>
-              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
+              <SummaryItemPrice>$ {total.toFixed(2)}</SummaryItemPrice>
             </SummaryItem>
             <StripeCheckout
               name="Lincestore"
               billingAddress
               shippingAddress
-              description={`Total a pagar: $${cart.total}`}
-              amount={cart.total * 100}
-              token={onToken}
+              description={`Total a pagar: $${total.toFixed(2)}`}
+              amount={(total * 100).toFixed(0)}
               stripeKey={KEY}
             >
               <Button>Comprar ahora</Button>
