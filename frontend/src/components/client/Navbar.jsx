@@ -10,7 +10,12 @@ import { Link } from "react-router-dom";
 const Container = styled.div`
   height: 60px;
 `;
-
+const UserShowImg = styled.img`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
 const Badge = styled.div`
   padding: 0 3px;
   background-color: blue;
@@ -67,7 +72,7 @@ const Right = styled.div`
 const MenuItem = styled.div`
   font-size: 14px;
   cursor: pointer;
-  margin-left: 25px;
+  margin-right: 5px;
 `;
 
 const StyledLink = styled(Link)`
@@ -83,6 +88,7 @@ const StyledLink = styled(Link)`
 const Navbar = () => {
   const quantity = useSelector(state => state.cart.quantity)
   var Name = localStorage.getItem("name");
+  var img = localStorage.getItem('img');
   return (
     <Container>
       <Wrapper>
@@ -101,9 +107,14 @@ const Navbar = () => {
           {Name?
           (
             <>
+              
               <StyledLink to="/Profile">
-                <MenuItem>Hola, {Name}.</MenuItem>
+                <MenuItem>{Name}</MenuItem>
               </StyledLink>
+              <UserShowImg
+                src={`${img}`}
+                alt="Imagen del usuario"
+              />
             </>
           )
           :
