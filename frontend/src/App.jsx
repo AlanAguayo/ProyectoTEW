@@ -4,7 +4,6 @@ import ProductList from "./pages/client/ProductList";
 import Register from "./pages/client/Register";
 import Login from "./pages/Login";
 import Cart from "./pages/client/Cart";
-import Success from "./pages/client/Success";
 import AdminHome from "./pages/admin/Home"
 import AdminNewProduct from "./pages/admin/NewProduct"
 import AdminNewUser from "./pages/admin/NewUser"
@@ -40,7 +39,6 @@ const App = () => {
         <Route path="/product/:id" element={<Product />}/>
         <Route path="/products/:category" element={<ProductList />}/>
         <Route path="/register" element={<Register />}/>
-        <Route path="/success" element={<Success />}/>
         <Route path="/profile" element={<Profile />}/>
         <Route path="/orders" element={<OrderList />}/>
         <Route path="/orders/:id" element={<Order />}/>

@@ -4,7 +4,6 @@ import {
 } from "react-icons/fa";
 import React from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const Container = styled.div`
@@ -15,18 +14,6 @@ const UserShowImg = styled.img`
   height: 30px;
   border-radius: 50%;
   object-fit: cover;
-`;
-const Badge = styled.div`
-  padding: 0 3px;
-  background-color: blue;
-  color: white;
-  font-size: 0.85rem;
-  font-weight: bold;
-  border-radius: 10px;
-  position: relative;
-  width: 0.5rem;
-  top: -10px;
-  right: -8px
 `;
 
 const Wrapper = styled.div`
@@ -87,7 +74,6 @@ const StyledLink = styled(Link)`
 `;
 
 const Navbar = () => {
-  const quantity = useSelector(state => state.cart.quantity)
   var Name = localStorage.getItem("name");
   var img = localStorage.getItem('img');
   return (
@@ -136,7 +122,6 @@ const Navbar = () => {
           <MenuItem>
             <div style={{ marginTop: '12px' }}>
               <FaShoppingCart />
-              <Badge>{quantity === 0 ? "" : quantity}</Badge>
             </div>
           </MenuItem>
         </Link>

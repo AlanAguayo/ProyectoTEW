@@ -5,6 +5,9 @@ import Products from "../../components/client/Products";
 import Footer from "../../components/client/Footer";
 import { useLocation } from "react-router";
 import { useState } from "react";
+import axios from 'axios';
+import { useEffect } from "react";
+
 
 const Container = styled.div``;
 
@@ -38,6 +41,20 @@ const ProductList = () => {
   const cat = location.pathname.split("/")[2];
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState("newest");
+  const [categoria, setCategoria] = useState(null);
+
+  useEffect(() => {
+    const obtenerCategoria = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/categories/${cat}`);
+        setCategoria(response.data);
+      } catch (error) {
+        console.error("Error al obtener la categoría:", error);
+      }
+    };
+
+    obtenerCategoria();
+  }, [cat]);
 
   const handleFilters = (e) => {
     const value = e.target.value;
@@ -51,7 +68,7 @@ const ProductList = () => {
     <Container>
       <Announcement />
       <Navbar />
-      <Title>{cat}</Title>
+      <Title>{categoria ? categoria.name :""}</Title>
       <FilterContainer>
         <Filter>
           <FilterText>Filtrar</FilterText>
