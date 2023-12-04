@@ -12,6 +12,8 @@ import { storage } from '../../firebase'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useParams } from "react-router-dom";
 import { list, getDownloadURL, deleteObject } from 'firebase/storage';
+import { checkAdmin, getToken } from "../../authUtils";
+
 
 const Container = styled.div`
   display: flex;
@@ -125,6 +127,13 @@ const ChartContainer = styled.div`
 
 const Product = () => {
   const navigate = useNavigate();
+
+  const token = getToken();
+
+  const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json', 
+  };
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [colors, setColors] = useState([]);
@@ -186,9 +195,10 @@ const Product = () => {
   };
 
   useEffect(() => {
+    checkAdmin(navigate);
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/products/${id}`,{headers});
         const productData = response.data;
 
         setFormData({
@@ -204,7 +214,7 @@ const Product = () => {
         setSizes(productData.size);
 
 
-        const category = await axios.get(`http://localhost:5000/api/categories/${productData.category}`);
+        const category = await axios.get(`http://localhost:5000/api/categories/${productData.category}`,{headers});
         const selectedCategoryOption = { value: category.data._id, label: category.data.name };
         setSelectedCategory(selectedCategoryOption);
 
@@ -224,7 +234,7 @@ const Product = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/categories");
+        const response = await axios.get("http://localhost:5000/api/categories",{headers});
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -233,7 +243,7 @@ const Product = () => {
 
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/orders");
+        const response = await axios.get("http://localhost:5000/api/orders",{headers});
         setOrders(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -245,7 +255,7 @@ const Product = () => {
     fetchProductData();
 
     fetchOrders();
-  }, [id]);
+  }, [id],[navigate]);
 
 
 
@@ -269,7 +279,7 @@ const Product = () => {
         price: parseFloat(formData.price),
       };
 
-      await axios.put("http://localhost:5000/api/products/"+id, productData);
+      await axios.put("http://localhost:5000/api/products/"+id, productData,{headers});
 
       navigate("/admin/products");
     } catch (error) {

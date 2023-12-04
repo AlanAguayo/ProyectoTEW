@@ -73,6 +73,7 @@ const MenuItem = styled.div`
   font-size: 14px;
   cursor: pointer;
   margin-right: 5px;
+  margin-left: 5px;
 `;
 
 const StyledLink = styled(Link)`
@@ -104,6 +105,14 @@ const Navbar = () => {
           </StyledLink>
         </Center>
         <Right>
+        <Link to="/cart">
+          <MenuItem>
+            <div style={{ marginTop: '12px' }}>
+              <FaShoppingCart />
+              <Badge>{quantity === 0 ? "" : quantity}</Badge>
+            </div>
+          </MenuItem>
+        </Link>
           {Name?
           (
             <>
@@ -126,14 +135,7 @@ const Navbar = () => {
               <StyledLink to="/login">
                 <MenuItem>Iniciar sesion</MenuItem>
               </StyledLink>
-              <Link to="/cart">
-                <MenuItem>
-                  <div style={{ marginTop: '12px' }}>
-                    <FaShoppingCart />
-                    <Badge>{quantity === 0 ? "" : quantity}</Badge>
-                  </div>
-                </MenuItem>
-              </Link>
+              
             </>
           
           )

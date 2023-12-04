@@ -4,6 +4,7 @@ import Topbar from "../../components/admin/Topbar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { checkAdmin, getToken } from "../../authUtils";
 
 const Container = styled.div`
   display: flex;
@@ -54,16 +55,25 @@ const NewCouponButton = styled.button`
 
 const NewCoupon = () => {
   const navigate = useNavigate();
+
+  const token = getToken();
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
+
   const { id } = useParams();
   const [formData, setFormData] = useState({
     name: "",
   });
 
   useEffect(() => {
+    checkAdmin(navigate);
     if(id!=="new"){
     const fetchCouponData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/coupons/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/coupons/${id}`,{headers});
         setFormData(response.data);
       } catch (error) {
         console.error("Error fetching coupon data:", error);
@@ -74,7 +84,7 @@ const NewCoupon = () => {
       fetchCouponData();
     }
   }
-  }, [id]);
+  }, [id], [navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -88,9 +98,9 @@ const NewCoupon = () => {
   const handleCreateCoupon = async () => {
     try {
       if (id!=="new") {
-        await axios.put(`http://localhost:5000/api/coupons/${id}`, formData);
+        await axios.put(`http://localhost:5000/api/coupons/${id}`, formData,{headers});
       } else {
-        await axios.post(`http://localhost:5000/api/coupons`, formData);
+        await axios.post(`http://localhost:5000/api/coupons`, formData,{headers});
       }
       navigate("/admin/coupons");
     } catch (error) {
