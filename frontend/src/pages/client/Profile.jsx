@@ -230,6 +230,14 @@ export default function Profile() {
         localStorage.setItem('city', formData.city);
         localStorage.setItem('state', formData.state);
         localStorage.setItem('cp', formData.cp);
+
+        if(image==null){
+
+        }else{
+          const imageRef = ref(storage, `users/${id}.jpg`)
+          uploadBytes(imageRef, image);
+          localStorage.setItem('img', imagePreview);
+        }
       } else {
         console.error("Error en la actualización:", response.statusText);
       }
