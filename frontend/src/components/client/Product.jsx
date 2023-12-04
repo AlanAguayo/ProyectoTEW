@@ -78,7 +78,7 @@ const Product = ({ item }) => {
   return (
     <Container>
       <Circle />
-      <Image src={item.image} />
+      <Image src={"https://firebasestorage.googleapis.com/v0/b/proyectotew-d69b0.appspot.com/o/products%2F"+item._id+"%2F1.jpg?alt=media"} />
       <Name>{item.name}</Name>
       <Info>
         <Icon>

@@ -10,6 +10,8 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { storage } from "../../firebase";
 import { ref, getDownloadURL } from "firebase/storage";
+import { checkAdmin, getToken } from "../../authUtils";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -52,17 +54,25 @@ const Button = styled.button`
 `;
 
 export default function ProductList() {
+  const navigate = useNavigate();
+
+  const token = getToken();
+
+  const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json', 
+  };
   const [productsItems, setProductsItems] = useState([]);
   const [imageUrls, setImageUrls] = useState({});
 
   const fetchData = async () => {
     try {
-      const productsResponse = await axios.get("http://localhost:5000/api/products");
+      const productsResponse = await axios.get("http://localhost:5000/api/products",{headers});
 
       const productsWithCategory = await Promise.all(
         productsResponse.data.map(async (product) => {
           const categoryResponse = await axios.get(
-            `http://localhost:5000/api/categories/${product.category}`
+            `http://localhost:5000/api/categories/${product.category}`,{headers}
           );
           const category = categoryResponse.data;
           return { ...product, category: category.name };
@@ -76,6 +86,7 @@ export default function ProductList() {
   };
 
   useEffect(() => {
+    checkAdmin(navigate);
     const fetchImagesForProducts = async () => {
       const imageUrlsMap = {};
       for (const product of productsItems) {
@@ -87,14 +98,14 @@ export default function ProductList() {
 
     fetchImagesForProducts();
     fetchData();
-  }, [productsItems]);
+  }, [productsItems],[navigate]);
 
   const handleDelete = async (productId) => {
     const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar el producto?");
 
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:5000/api/products/${productId}`);
+        await axios.delete(`http://localhost:5000/api/products/${productId}`,{headers});
 
         fetchData();
       } catch (error) {

@@ -91,13 +91,13 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        const { _id, name, lastName, img, isAdmin, birthday,
+        const { _id, name, lastName, isAdmin, birthday,
           phone, country, accessToken, street, city, state, cp } = data;
 
         localStorage.setItem("id", _id);
         localStorage.setItem("name", name);
         localStorage.setItem("lastName", lastName);
-        localStorage.setItem("img", img);
+        localStorage.setItem("img", "https://firebasestorage.googleapis.com/v0/b/proyectotew-d69b0.appspot.com/o/users%2F"+_id+".jpg?alt=media");
         localStorage.setItem("birthday", birthday);
         localStorage.setItem("phone", phone);
         localStorage.setItem("country", country);

@@ -8,6 +8,8 @@ import {AgGridReact} from 'ag-grid-react';
 import axios from "axios";
 import 'ag-grid-community/styles//ag-grid.css';
 import 'ag-grid-community/styles//ag-theme-quartz.css';
+import { useNavigate } from 'react-router-dom';
+import { checkAdmin, getToken } from "../../authUtils";
 
 const Container = styled.div`
 display: flex;
@@ -37,11 +39,19 @@ const Button = styled.button`
 `;
 
 export default function CouponList() {
+  const navigate = useNavigate();
+  const token = getToken();
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
+
   const [couponsItems, setCouponsItems] = useState([]);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/coupons");
+      const response = await axios.get("http://localhost:5000/api/coupons",{headers});
       setCouponsItems(response.data);
     } catch (error) {
       console.error("Error fetching coupons data:", error);
@@ -49,15 +59,16 @@ export default function CouponList() {
   };
 
   useEffect(() => {
+    checkAdmin(navigate);
     fetchData();
-  }, []);
+  }, [navigate]);
 
   const handleDelete = async (couponId) => {
     const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este usuario?");
     
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:5000/api/coupons/${couponId}`);
+        await axios.delete(`http://localhost:5000/api/coupons/${couponId}`,{headers});
         fetchData();
       } catch (error) {
         console.error(`Error al eliminar el usuario con ID ${couponId}:`, error);

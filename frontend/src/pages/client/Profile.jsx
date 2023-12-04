@@ -16,6 +16,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Button } from "react-bootstrap";
 import { checkAuth, getToken } from "../../authUtils";
+import { ref, uploadBytes } from 'firebase/storage';
+import { storage } from "../../firebase"
 
 const User = styled.div`
   flex: 4;
@@ -175,23 +177,42 @@ export default function Profile() {
   const cp = localStorage.getItem('cp');
   const img = localStorage.getItem('img');
   const token = getToken();
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [formData, setFormData] = useState({
-    email: email || "", 
-    name: name || "",
-    lastName: lastName || "",
-    birthday: birthday || "",
-    phone: phone || "",
-    country: country || "",
-    street: street || "",
-    city: city || "",
-    state: state || "",
-    cp: cp || "",
+    email: email==="undefined" ? "" : email, 
+    name: name ==="undefined" ? "" : name,
+    lastName: lastName ==="undefined" ? "" : lastName,
+    birthday: birthday ==="undefined" ? "" : birthday,
+    phone: phone || 0,
+    country: country ==="undefined" ? "" : country,
+    street: street ==="undefined" ? "" : street,
+    city: city ==="undefined" ? "" : city,
+    state: state ==="undefined" ? "" : state,
+    cp: cp || 0,
   });
+  const [image, setImage] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const handleImageChange = (e) => {
+    const selectedImage = e.target.files[0];
+
+    if (selectedImage) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(selectedImage);
+    } else {
+      setImagePreview("");
+    }
+
+    setImage(selectedImage);
+  };
+  
 
   useEffect(() => {
     checkAuth(navigate);
@@ -222,7 +243,6 @@ export default function Profile() {
         localStorage.setItem('city', formData.city);
         localStorage.setItem('state', formData.state);
         localStorage.setItem('cp', formData.cp);
-
       } else {
         console.error("Error en la actualización:", response.statusText);
       }
@@ -234,8 +254,9 @@ export default function Profile() {
   
   return (
     <>
+    <Announcement />
     <Navbar />
-      <Announcement />
+      
     <User>
       <UserTitleContainer>
         <h1>Perfil</h1>
@@ -389,13 +410,13 @@ export default function Profile() {
             <UserUpdateRight>
               <UserUpdateUpload>
                 <UserUpdateImg
-                  src={`${img}`}
+                  src={imagePreview || `${img}`}
                   alt="Imagen del usuario"
                 />
                 <label htmlFor="file">
                 <FaUpload/>
                 </label>
-                <input type="file" id="file" style={{ display: "none" }} />
+                <input type="file" id="file" style={{ display: "none" }} onChange={handleImageChange} />
               </UserUpdateUpload>
               <UserUpdateButton onClick={handleUpdate}>Update</UserUpdateButton>
             </UserUpdateRight>
