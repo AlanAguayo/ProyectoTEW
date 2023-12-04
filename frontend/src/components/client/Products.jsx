@@ -15,6 +15,15 @@ const Products = ({ cat, filters, sort }) => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
+  const filterColor = (itemColors, selectedColor) => {
+    const itemColorsArr = Array.isArray(itemColors) ? itemColors : [];
+    const itemColorsUpper = itemColorsArr.map(color => color.toUpperCase());
+    const selectedColorUpper = selectedColor.toUpperCase();
+    return selectedColor ? itemColorsUpper.includes(selectedColorUpper) : true;
+  };
+  
+  
+
   useEffect(() => {
     const getProducts = async () => {
       try {
@@ -25,7 +34,7 @@ const Products = ({ cat, filters, sort }) => {
         );
         setProducts(res.data);
       } catch (err) {
-        setProducts(popularProducts)
+        setProducts(popularProducts);
       }
     };
     getProducts();
@@ -34,11 +43,13 @@ const Products = ({ cat, filters, sort }) => {
   useEffect(() => {
     cat &&
       setFilteredProducts(
-        products.filter((item) =>
-          Object.entries(filters).every(([key, value]) =>
-            item[key].includes(value)
-          )
-        )
+        products.filter((item) => {
+          const filterCondition = Object.entries(filters).every(([key, value]) => {
+            return key === 'color' ? filterColor(item.color, value) : item[key].includes(value);
+          });
+            const categoryCondition = item.category === cat;
+          return filterCondition && categoryCondition;
+        })
       );
   }, [products, cat, filters]);
 

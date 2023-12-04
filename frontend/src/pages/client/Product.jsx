@@ -114,6 +114,8 @@ const FilterSizeButton = styled.button`
   cursor: pointer;
 `;
 
+
+
 const Product = () => {
   const token = getToken();
   const navigate = useNavigate();
@@ -124,6 +126,7 @@ const Product = () => {
   const [quantity, setQuantity] = useState(1);
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
+  const [error, setError] = useState("");
 
   const idProducto = location.pathname.split("/")[2];
   const idUser = localStorage.getItem('id');
@@ -147,38 +150,45 @@ const Product = () => {
   }
 
   const postData = async () => {
-    console.log('Color:', color);
-    console.log('Size:', size);
-    try {
-      const response = await axios.post(`http://localhost:5000/api/carts`,
-        {
-          userId: idUser,
-          products: [
-            {
-              productId: idProducto,
-              name: data.name,
-              quantity: quantity,
-              color: color,
-              size: size, 
-            },
-          ],
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+    if (color != '' && size != '') {
+      setError('');
+      try {
+        const response = await axios.post(`http://localhost:5000/api/carts`,
+          {
+            userId: idUser,
+            products: [
+              {
+                productId: idProducto,
+                name: data.name,
+                quantity: quantity,
+                color: color,
+                size: size, 
+              },
+            ],
           },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log('Producto agregado al carrito:', response.data);
+        dispatch(
+          addProduct({ ...data, quantity, color, size })
+        );
+      } catch (error) {
+        console.error("Error:", error);
+    
+        if (error.response) {
+          console.error("Response data:", error.response.data);
+
+          if (error.response.status === 409) {
+            navigate("/login");
+          }
         }
-      );
-      console.log('Producto agregado al carrito:', response.data);
-      dispatch(
-        addProduct({ ...data, quantity, color, size })
-      );
-    } catch (error) {
-      console.error("Error:", error);
-  
-      if (error.response) {
-        console.error("Response data:", error.response.data);
       }
+    }else{
+      setError("Seleccione un tamaño y color");
     }
   }
 
@@ -191,14 +201,12 @@ const Product = () => {
   };
 
   const handleColorChange = (selectedColor) => {
-    console.log('handleColorChange ejecutada');
-    console.log('Selected Color:', selectedColor);
+    setError('');
     setColor(selectedColor);
   };
 
   const handleSizeChange = (selectedSize) => {
-    console.log('handlesizeChange ejecutada');
-    console.log('Selected Size:', selectedSize);
+    setError('');
     setSize(selectedSize);
   };
 
@@ -237,9 +245,10 @@ const Product = () => {
               <FaMinus onClick={() => handleQuantity("dec")} />
               <Amount>{quantity}</Amount>
               <FaPlus onClick={() => handleQuantity("inc")} />
-            </AmountContainer>
+            </AmountContainer>            
             <Button onClick={postData}>AGREGAR AL CARRITO</Button>
           </AddContainer>
+          {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
         </InfoContainer>
       </Wrapper>
       <Footer />
