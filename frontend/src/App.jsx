@@ -20,6 +20,7 @@ import AdminCategories from "./pages/admin/Categories"
 import AdminCoupons from "./pages/admin/Coupons"
 import AdminNewCoupons from "./pages/admin/NewCoupon"
 import LogOut from "./pages/LogOut";
+import { Axios } from "axios";
 
 import {
   BrowserRouter,
