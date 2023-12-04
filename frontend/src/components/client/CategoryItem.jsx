@@ -44,7 +44,7 @@ const CategoryItem = ({ item }) => {
   return (
     <Container>
       <Link to={`/products/${item._id}`}>
-      <Image src={"https://proyectotew.s3.amazonaws.com/categories/"+item.image} />
+      <Image src={"https://firebasestorage.googleapis.com/v0/b/proyectotew-d69b0.appspot.com/o/categories%2F"+item._id+".jpg?alt=media"} />
       <Info>
         <Title>{item.name}</Title>
         <Button>Comprar Ahora</Button>

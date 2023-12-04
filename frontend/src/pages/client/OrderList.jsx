@@ -1,19 +1,17 @@
-import 'react-data-grid/lib/styles.css';
-import DataGrid from 'react-data-grid';
-import { FaTrash } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
-import Navbar from "../../components/client/Navbar"
 import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import { userData } from "../../dummyData";
-import { useNavigate } from 'react-router-dom';
-import Chart from "../../components/Chart";
-import { checkAuth, getToken } from "../../authUtils";
 import axios from "axios";
+import 'ag-grid-community/styles//ag-grid.css';
+import 'ag-grid-community/styles//ag-theme-quartz.css';
+import { checkAuth, getToken } from '../../authUtils';
+import { useNavigate } from 'react-router-dom';
+import Navbar from "../../components/client/Navbar";
+import Announcement from "../../components/client/Announcement";
+import Footer from "../../components/client/Footer";
+import Chart from "../../components/Chart";
 
 const Container = styled.div`
   display: flex;
@@ -24,161 +22,127 @@ const MainContent = styled.div`
   padding: 20px;
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
-
-  &:hover {
-    text-decoration: none;
-    color: inherit;
-  }
-`;
-
-const ProductListEdit = styled.button`
-  border: none;
-  border-radius: 10px;
-  padding: 5px 10px;
-  background-color: #3bb077;
-  color: white;
-  cursor: pointer;
-  margin-right: 20px;
-`;
-
-const ProductListItem = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const ProductListImg = styled.img`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-`;
-
-const ProductListDelete = styled.div`
-  color: red;
-  cursor: pointer;
-`;
-
-const TrashRenderer = (props) => ({});
-
-const Button = styled.button`
-  width: 100%;
-  padding: 10px;
-  background-color: black;
-  color: white;
-  font-weight: 600;
-`;
-
-const frameworkComponents = {
-  trashRenderer: TrashRenderer,
-};
-
 export default function OrderList() {
+  const [ordersItems, setOrdersItems] = useState([]);
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-
+  const token = getToken();
   const id = localStorage.getItem('id');
-  
+  const [orderData, setOrderData] = useState([])
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
+
   const fetchData = async () => {
     try {
-      const token = getToken();
-  
-      const response = await axios.get(`http://localhost:5000/api/orders/find/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      setData(response.data); 
+      const ordersResponse = await axios.get(`http://localhost:5000/api/orders/find/${id}`, { headers });
+      const orderList = ordersResponse.data;
+
+      const updatedOrderList = await Promise.all(orderList.map(async (order) => {
+        if (order.coupon) {
+          const couponResponse = await axios.get(`http://localhost:5000/api/coupons/${order.coupon}`, { headers });
+          const couponCode = couponResponse.data.code;
+          return { ...order, coupon: couponCode };
+        } else {
+          return order;
+        }
+      }));
+
+      setOrdersItems(updatedOrderList);
+
+        const monthlyData = {};
+        ordersResponse.data.forEach((order) => {
+          const month = new Date(order.createdAt).getMonth() + 1;
+          if (!monthlyData[month]) {
+            monthlyData[month] = 0;
+          }
+          monthlyData[month] += order.amount;
+        });
+
+        const chartData = Object.keys(monthlyData).map((month) => ({
+          month: `Month ${month}`,
+          amount: monthlyData[month],
+        }));
+
+        setOrderData(chartData);
+      
+
     } catch (error) {
       console.error("Error fetching orders data:", error);
-  
-      // Log the response data if available
-      if (error.response) {
-        console.error("Response data:", error.response.data);
-      }
     }
-  }
-  
+  };
+
   useEffect(() => {
     checkAuth(navigate);
     fetchData();
   }, [navigate]);
 
   const columns = [
-    { field: "_id", headerName: "Id", width: 220 },
-    {
-      field: "product",
-      headerName: "Producto",
-      width: 200,
-      renderCell: (params) => {
-        return (
-          <ProductListItem>
-            <ProductListImg src={params.row.img} alt="" />
-            {params.row.title}
-          </ProductListItem>
-        );
-      },
-    },
-    /*{ 
-      field: "quantity", 
-      headerName: "Cantidad", 
-      width: 200,
-      renderCell: (params) => params.row.products[0].quantity,
-    },*/
+    { field: "_id", headerName: "Id", width: 240, },
     {
       field: "amount",
-      headerName: "Monto",
-      width: 160,
+      headerName: "Cantidad",
+      width: 250,
+      filter: true,
+    },
+    {
+      field: "address",
+      headerName: "Direccion",
+      width: 250,
+      filter: true,
     },
     {
       field: "status",
       headerName: "Estado",
-      width: 160,
+      width: 250,
+      filter: true,
     },
-    {/*
     {
-      field: "action",
+      field: "coupon",
+      headerName: "Cupon",
+      width: 250,
+      filter: true,
+    },
+    {
+      field: "_id",
       headerName: "Acciones",
-      width: 150,
-      renderCell: (params) => {
+      cellRenderer: (params) => {
         return (
           <>
-            <Link to={"/product/" + params.row._id}>
-              <ProductListEdit>Edit</ProductListEdit>
+            <Link to={`/orders/${params.value}`}>
+              <FaEye />
             </Link>
-
           </>
         );
       },
+      width: 100
     },
-    */}
   ];
 
   return (
     <div>
+      <Announcement />
       <Navbar />
       <Container>
         <MainContent>
-          <AgGridReact
-            rowData={data}
-            columnDefs={columns}
-            pagination={true}
-            paginationPageSize={5}
-            checkboxSelection={true}
-            frameworkComponents={frameworkComponents}
-          />
-          <Chart
-            data={userData}
-            title="Compras"
-            grid
-            dataKey="Active User"
-          />
+        <Chart data={orderData} title="Compras por Mes" grid dataKey="amount" />
+          <div
+            className="ag-theme-quartz"
+            style={{
+              height: '300px',
+            }}
+          >
+            <AgGridReact
+              rowData={ordersItems}
+              columnDefs={columns}
+              pagination={true}
+              paginationPageSize={20}
+            />
+          </div>
         </MainContent>
       </Container>
+      <Footer />
     </div>
   );
 }

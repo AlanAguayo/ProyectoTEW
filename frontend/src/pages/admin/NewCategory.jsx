@@ -7,6 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { storage } from "../../firebase"
 import { ref, uploadBytes } from 'firebase/storage';
 import { FaCamera } from "react-icons/fa";
+import { checkAdmin, getToken } from "../../authUtils";
+
 
 const Container = styled.div`
   display: flex;
@@ -77,6 +79,15 @@ display:none
 
 const NewCategory = () => {
   const navigate = useNavigate();
+  
+
+  const token = getToken();
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
+
   const { id } = useParams();
   const [formData, setFormData] = useState({
     name: "",
@@ -102,10 +113,11 @@ const NewCategory = () => {
   };
 
   useEffect(() => {
+    checkAdmin(navigate);
     if(id!=="new"){
     const fetchCategoryData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/categories/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/categories/${id}`,{headers});
         setFormData(response.data);
       } catch (error) {
         console.error("Error fetching category data:", error);
@@ -116,7 +128,7 @@ const NewCategory = () => {
       fetchCategoryData();
     }
   }
-  }, [id]);
+  }, [id],[navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -131,9 +143,9 @@ const NewCategory = () => {
     try {
       let categoryId = id;
       if (id!=="new") {
-        await axios.put(`http://localhost:5000/api/categories/${id}`, formData);
+        await axios.put(`http://localhost:5000/api/categories/${id}`, formData,{headers});
       } else {
-        const response = await axios.post(`http://localhost:5000/api/categories`, formData);
+        const response = await axios.post(`http://localhost:5000/api/categories`, formData,{headers});
         categoryId = response.data._id;
       }
       navigate("/admin/categories");

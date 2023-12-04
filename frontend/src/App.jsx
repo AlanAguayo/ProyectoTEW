@@ -21,6 +21,7 @@ import AdminCoupons from "./pages/admin/Coupons"
 import AdminNewCoupons from "./pages/admin/NewCoupon"
 import LogOut from "./pages/LogOut";
 import { Axios } from "axios";
+import Order from "./pages/client/Order"
 
 import {
   BrowserRouter,
@@ -42,6 +43,7 @@ const App = () => {
         <Route path="/success" element={<Success />}/>
         <Route path="/profile" element={<Profile />}/>
         <Route path="/orders" element={<OrderList />}/>
+        <Route path="/orders/:id" element={<Order />}/>
         <Route path="/admin" element={<AdminHome />}/>
         <Route path="/admin/products/new" element={<AdminNewProduct />}/>
         <Route path="/admin/users/:id" element={<AdminNewUser />}/>

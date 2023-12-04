@@ -4,6 +4,7 @@ import Topbar from "../../components/admin/Topbar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { checkAdmin, getToken } from "../../authUtils";
 
 const Container = styled.div`
   display: flex;
@@ -64,6 +65,13 @@ const NewUserButton = styled.button`
 
 const NewUser = () => {
   const navigate = useNavigate();
+
+  const token = getToken();
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
   const { id } = useParams();
   const [formData, setFormData] = useState({
     name: "",
@@ -75,9 +83,10 @@ const NewUser = () => {
   });
 
   useEffect(() => {
+    checkAdmin(navigate);
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/users/find/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/users/find/${id}`,{headers});
         setFormData(response.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -87,7 +96,7 @@ const NewUser = () => {
     if (id) {
       fetchUserData();
     }
-  }, [id]);
+  }, [id], [navigate]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -108,7 +117,7 @@ const NewUser = () => {
   const handleCreateUser = async () => {
     try {
       if (id) {
-        await axios.put(`http://localhost:5000/api/users/${id}`, formData);
+        await axios.put(`http://localhost:5000/api/users/${id}`, formData,{headers});
       }
       navigate("/admin/users");
     } catch (error) {

@@ -8,7 +8,8 @@ import Select from "react-select";
 import { FaTrash } from "react-icons/fa";
 import { useDropzone } from "react-dropzone";
 import { ref, uploadBytes } from 'firebase/storage';
-import { storage } from '../../firebase'
+import { storage } from '../../firebase';
+import { checkAdmin, getToken } from "../../authUtils";
 
 const Container = styled.div`
   display: flex;
@@ -116,6 +117,15 @@ const StyledTrashIcon = styled(FaTrash)`
 
 const NewProduct = () => {
   const navigate = useNavigate();
+
+  const token = getToken();
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
+
+  
   const [formData, setFormData] = useState({
     name: "",
     desc: "",
@@ -141,9 +151,10 @@ const NewProduct = () => {
   };
 
   useEffect(() => {
+    checkAdmin(navigate);
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/categories");
+        const response = await axios.get("http://localhost:5000/api/categories",{headers});
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -151,7 +162,7 @@ const NewProduct = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, [navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -173,7 +184,7 @@ const NewProduct = () => {
         price: parseFloat(formData.price),
       };
 
-      const createdProductResponse = await axios.post("http://localhost:5000/api/products", productData);
+      const createdProductResponse = await axios.post("http://localhost:5000/api/products", productData,{headers});
 
     const createdProductId = createdProductResponse.data._id;
 

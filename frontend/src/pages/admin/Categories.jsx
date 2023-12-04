@@ -95,7 +95,7 @@ export default function CategoryList() {
     
     if (confirmDelete) {
       try {
-      await axios.delete(`http://localhost:5000/api/categories/${categoryId}`);
+      await axios.delete(`http://localhost:5000/api/categories/${categoryId}`,{headers});
       
       const imageRefToDelete = ref(storage, `categories/${categoryId}`);
       await deleteObject(imageRefToDelete);

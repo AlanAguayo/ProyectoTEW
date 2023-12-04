@@ -4,32 +4,18 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import Topbar from "../../components/admin/Topbar";
-import Sidebar from "../../components/admin/Sidebar";
 import { AgGridReact } from 'ag-grid-react';
 import axios from "axios";
 import 'ag-grid-community/styles//ag-grid.css';
 import 'ag-grid-community/styles//ag-theme-quartz.css';
-import { storage } from "../../firebase";
-import { ref, getDownloadURL } from 'firebase/storage';
-import { checkAdmin, getToken } from "../../authUtils";
-import { useNavigate } from "react-router-dom";
+import { checkAuth, getToken} from '../../authUtils';
+import { useNavigate } from 'react-router-dom';
+import Navbar from "../../components/client/Navbar";
+import Announcement from "../../components/client/Announcement";
+import Footer from "../../components/client/Footer";
 
 const Container = styled.div`
   display: flex;
-`;
-
-const ProductListProduct = styled.div`
-display: flex;
-  align-items: center;
-`;
-
-const ProductListImg = styled.img`
-width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
 `;
 
 const MainContent = styled.div`
@@ -37,33 +23,25 @@ const MainContent = styled.div`
   padding: 20px;
 `;
 
-const OrderDetails = styled.div`
+const Order = styled.div`
   margin-bottom: 20px;
 `;
 
-const UserImage = ({ imageUrl, altText, size }) => (
-    <ProductListProduct>
-      <ProductListImg src={imageUrl} alt={altText} style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', marginRight: '10px' }}/>
-    </ProductListProduct>
-  );
-
-const OrderDetailsPage = () => {
-    const navigate = useNavigate();
-
-    const token = getToken();
-
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json', 
-    };
-    const { id } = useParams();
-const [orderDetails, setOrderDetails] = useState({});
+const OrderPage = () => {
+const { id } = useParams();
+const [order, setOrder] = useState({});
 const [productsList, setProductsList] = useState([]);
-const [userImage, setUserImage] = useState("");
+const navigate = useNavigate();
+  const token = getToken();
+  
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json', 
+  };
 
 
 useEffect(() => {
-    checkAdmin(navigate);
+    checkAuth(navigate);
     const fetchData = async () => {
         try {
             const orderResponse = await axios.get(`http://localhost:5000/api/orders/${id}`,{headers});
@@ -83,9 +61,9 @@ useEffect(() => {
             if (order.coupon) {
                 const couponResponse = await axios.get(`http://localhost:5000/api/coupons/${order.coupon}`,{headers});
                 const coupon = couponResponse.data;
-                setOrderDetails({ ...orderWithUserDetails, couponCode: coupon.code, couponDiscount: coupon.discount });
+                setOrder({ ...orderWithUserDetails, couponCode: coupon.code, couponDiscount: coupon.discount });
             } else {
-                setOrderDetails(orderWithUserDetails);
+                setOrder(orderWithUserDetails);
             }
 
             const productsResponse = await axios.get("http://localhost:5000/api/products",{headers});
@@ -109,16 +87,12 @@ useEffect(() => {
 
             setProductsList(filteredProducts);
 
-
-        const userImageRef = ref(storage, `users/${user._id}.jpg`);
-        const userImageUrl = await getDownloadURL(userImageRef);
-        setUserImage(userImageUrl);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
     fetchData();
-}, [id],[navigate]);
+}, [id, navigate]);
 
     const columns = [
         { field: "_id", headerName: "Id", width: 240, },
@@ -160,7 +134,7 @@ useEffect(() => {
             cellRenderer: (params) => {
                 return (
                     <>
-                        <Link to={`/admin/product/${params.value}`}>
+                        <Link to={`/product/${params.value}`}>
                             <FaEye />
                         </Link>
                     </>
@@ -173,31 +147,22 @@ useEffect(() => {
 
     return (
         <div>
-            <Topbar />
+            <Announcement />
+      <Navbar />
             <Container>
-                <Sidebar />
                 <MainContent>
                     <h1>Detalles del Pedido</h1>
-                    <OrderDetails>
-                        <p>Codigo: {orderDetails._id}</p>
-                        <p>Estado: {orderDetails.status}</p>
-                        <p>Catidad: {orderDetails.amount}</p>
-                    </OrderDetails>
-                    <OrderDetails>
-                        <h2>Usuario</h2>
-                        <UserImage imageUrl={userImage} altText="Imagen de usuario" size={64}/>
-                        <p>Nombre: {orderDetails.userName}</p>
-                        <p>Email: {orderDetails.userEmail}</p>
-                        <p>Telefono: {orderDetails.userPhone}</p>
-                        <p>Direccion: {orderDetails.userAddress}</p>
-                        <p>Cantidad: {orderDetails.amount}</p>
-                        <p>Dirección: {orderDetails.address}</p>
-                    </OrderDetails>
-                    <OrderDetails>
+                    <Order>
+                        <p>Codigo: {order._id}</p>
+                        <p>Estado: {order.status}</p>
+                        <p>Catidad: {order.amount}</p>
+                        <p>Direccion: {order.userAddress}</p>
+                    </Order>
+                    <Order>
                         <h2>Cupon</h2>
-                        <p>Cupon: {orderDetails.couponCode}</p>
-                        <p>Descuento: {orderDetails.couponDiscount}</p>
-                    </OrderDetails>
+                        <p>Cupon: {order.couponCode}</p>
+                        <p>Descuento: {order.couponDiscount}</p>
+                    </Order>
 
                     <h2>Productos en el Pedido</h2>
                     <div
@@ -215,8 +180,9 @@ useEffect(() => {
                     </div>
                 </MainContent>
             </Container>
+            <Footer/>
         </div>
     );
 };
 
-export default OrderDetailsPage;
+export default OrderPage;

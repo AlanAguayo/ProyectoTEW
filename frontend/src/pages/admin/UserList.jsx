@@ -8,6 +8,8 @@ import {AgGridReact} from 'ag-grid-react';
 import axios from "axios";
 import 'ag-grid-community/styles//ag-grid.css';
 import 'ag-grid-community/styles//ag-theme-quartz.css';
+import { checkAdmin, getToken } from "../../authUtils";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
 display: flex;
@@ -32,11 +34,19 @@ const MainContent = styled.div`
 `;
 
 export default function UserList() {
+  const navigate = useNavigate();
+
+  const token = getToken();
+
+  const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json', 
+  };
   const [usersItems, setUsersItems] = useState([]);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/users");
+      const response = await axios.get("http://localhost:5000/api/users",{headers});
       setUsersItems(response.data);
     } catch (error) {
       console.error("Error fetching users data:", error);
@@ -44,15 +54,16 @@ export default function UserList() {
   };
 
   useEffect(() => {
+    checkAdmin(navigate);
     fetchData();
-  }, []);
+  }, [navigate]);
 
   const handleDelete = async (userId) => {
     const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este usuario?");
     
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:5000/api/users/${userId}`);
+        await axios.delete(`http://localhost:5000/api/users/${userId}`,{headers});
         fetchData();
       } catch (error) {
         console.error(`Error al eliminar el usuario con ID ${userId}:`, error);
