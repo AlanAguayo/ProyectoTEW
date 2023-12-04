@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
+import { checkAuth, getToken } from "../../authUtils";
+import { useEffect } from "react";
+
 
 const Container = styled.div`
   width: 100vw;
@@ -56,6 +59,9 @@ const Button = styled.button`
 
 const Register = () => {
   const navigate = useNavigate();
+  const token = getToken();
+
+  
 
   const [formData, setFormData] = useState({
     name: "",
@@ -98,8 +104,44 @@ const Register = () => {
       });
 
       if (response.ok) {
-        console.log("Registro exitoso");
-        navigate('/login');
+        const responseData = await response.json();
+        console.log(formData.email);
+        const responseLogIn = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            password: formData.password,
+            email: formData.email,
+          }),
+        });
+        if (responseLogIn.ok) {
+          const responseDataLog = await responseLogIn.json();
+          console.log(responseDataLog);
+          const responseCart = await fetch("http://localhost:5000/api/carts", {
+            method: "POST",
+            headers: {
+              'Authorization': `Bearer ${responseDataLog.accessToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: responseData._id
+            }),
+          });
+          if (responseCart.ok) {
+            console.log("Registro exitoso");
+            navigate("/login");
+          }else{
+            setError("Error en el registro");
+          }
+          }else{
+            setError("Error en el registro");
+          }
+
+        
+        
+
       } else {
         setError("Error en el registro");
       }

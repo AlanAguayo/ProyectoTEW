@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { getToken } from "../../authUtils";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const Info = styled.div`
   opacity: 0;
@@ -79,7 +80,7 @@ const Name = styled.div`
 
 
 const Product = ({ item }) => {
-
+  const navigate = useNavigate();
   const id = localStorage.getItem('id');
   const token = getToken();
 
@@ -108,25 +109,18 @@ const Product = ({ item }) => {
   const AddCart = async () => {
     try {
       const updatedCart = { ...cart };
-  
-      // Create a new product object for the added item
       const newProduct = {
         productId: item._id,
         quantity: 1,
       };
-  
-      // Add the new product to the products array
       updatedCart.products.push(newProduct);
-  
-      // Make the API request to update the cart
       const response = await axios.put(
         `http://localhost:5000/api/carts/${cart._id}`,
         updatedCart,
         { headers }
       );
-  
-      // Update the state with the response data
       setCart(response.data);
+      navigate("/cart");
     } catch (error) {
       console.error("Error al actualizar:", error);
     }

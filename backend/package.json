@@ -7,7 +7,7 @@
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Aguayo,Arriaga,Godoy,Jaramillo",
+  "author": "Aguayo,Godoy,Jaramillo",
   "license": "ISC",
   "dependencies": {
     "@material-ui/core": "^4.12.4",
