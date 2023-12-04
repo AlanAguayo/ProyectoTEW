@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { checkAuth, getToken } from "../../authUtils";
 import axios from "axios";
+import { ip } from '../../constants.js';
 
 const KEY = "pk_test_51OCoZuDUnbodT6MUcaAYA4vkMIDwLCZglQXOMke3TVs4XNgBSwlorUlX9jOdBP20reowO3kEqYmJ2cTQWc1YsLAM00G7vneRLS";
 
@@ -160,10 +161,10 @@ const Cart = () => {
 
   const fetchCart = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/carts/${id}`, { headers });
+      const response = await axios.get(`http://${ip}:5000/api/carts/${id}`, { headers });
       setCart(response.data);
       const productDetailsPromises = response.data.products.map(async (product) => {
-        const productResponse = await axios.get(`http://localhost:5000/api/products/${product.productId}`, { headers });
+        const productResponse = await axios.get(`http://${ip}:5000/api/products/${product.productId}`, { headers });
         return productResponse.data;
       });
 
@@ -190,7 +191,7 @@ const Cart = () => {
       updatedCart.products[productIndex].quantity += 1;
 
       const response = await axios.put(
-        `http://localhost:5000/api/carts/${cart._id}`,
+        `http://${ip}:5000/api/carts/${cart._id}`,
         updatedCart,
         { headers }
       );
@@ -216,7 +217,7 @@ const Cart = () => {
       updatedCart.products[productIndex].quantity -= 1;
 
       const response = await axios.put(
-        `http://localhost:5000/api/carts/${cart._id}`,
+        `http://${ip}:5000/api/carts/${cart._id}`,
         updatedCart,
         { headers }
       );
@@ -235,7 +236,7 @@ const Cart = () => {
       updatedCart.products = updatedCart.products.filter(product => product.productId !== productId);
 
       await axios.put(
-        `http://localhost:5000/api/carts/${cart._id}`,
+        `http://${ip}:5000/api/carts/${cart._id}`,
         updatedCart,
         { headers }
       );
@@ -257,7 +258,7 @@ const Cart = () => {
 
   const applyCoupon = async () => {
     try {
-      const couponResponse = await axios.get("http://localhost:5000/api/coupons", { headers });
+      const couponResponse = await axios.get("http://"+ip+":5000/api/coupons", { headers });
       const foundCoupon = couponResponse.data.find(c => c.code === coupon);
 
       if (foundCoupon) {
@@ -288,9 +289,9 @@ const Cart = () => {
         coupon: appliedCouponId,
       };
 
-      const response = await axios.post('http://localhost:5000/api/orders', orderData, { headers });
+      const response = await axios.post('http://'+ip+':5000/api/orders', orderData, { headers });
 
-      await axios.put(`http://localhost:5000/api/carts/${cart._id}`, { products: [] }, { headers });
+      await axios.put(`http://${ip}:5000/api/carts/${cart._id}`, { products: [] }, { headers });
 
       fetchCart();
 

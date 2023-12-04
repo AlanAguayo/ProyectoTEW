@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { checkAdmin, getToken } from "../../authUtils";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   display: flex;
@@ -86,7 +87,7 @@ const NewUser = () => {
     checkAdmin(navigate);
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/users/find/${id}`,{headers});
+        const response = await axios.get(`http://${ip}:5000/api/users/find/${id}`,{headers});
         setFormData(response.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -117,7 +118,7 @@ const NewUser = () => {
   const handleCreateUser = async () => {
     try {
       if (id) {
-        await axios.put(`http://localhost:5000/api/users/${id}`, formData,{headers});
+        await axios.put(`http://${ip}:5000/api/users/${id}`, formData,{headers});
       }
       navigate("/admin/users");
     } catch (error) {

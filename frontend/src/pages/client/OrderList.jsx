@@ -12,6 +12,7 @@ import Navbar from "../../components/client/Navbar";
 import Announcement from "../../components/client/Announcement";
 import Footer from "../../components/client/Footer";
 import Chart from "../../components/Chart";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   display: flex;
@@ -36,12 +37,12 @@ export default function OrderList() {
 
   const fetchData = async () => {
     try {
-      const ordersResponse = await axios.get(`http://localhost:5000/api/orders/find/${id}`, { headers });
+      const ordersResponse = await axios.get(`http://${ip}:5000/api/orders/find/${id}`, { headers });
       const orderList = ordersResponse.data;
 
       const updatedOrderList = await Promise.all(orderList.map(async (order) => {
         if (order.coupon) {
-          const couponResponse = await axios.get(`http://localhost:5000/api/coupons/${order.coupon}`, { headers });
+          const couponResponse = await axios.get(`http://${ip}:5000/api/coupons/${order.coupon}`, { headers });
           const couponCode = couponResponse.data.code;
           return { ...order, coupon: couponCode };
         } else {

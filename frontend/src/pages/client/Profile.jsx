@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { checkAuth, getToken } from "../../authUtils";
 import { ref, uploadBytes } from 'firebase/storage';
 import { storage } from "../../firebase"
+import { ip } from '../../constants.js';
 
 const User = styled.div`
   flex: 4;
@@ -207,7 +208,7 @@ export default function Profile() {
   
   const handleUpdate = async () => {    
     try {      
-      const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+      const response = await fetch(`http://${ip}:5000/api/users/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

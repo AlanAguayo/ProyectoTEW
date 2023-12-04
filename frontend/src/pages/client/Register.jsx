@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   width: 100vw;
@@ -89,7 +90,7 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch("http://"+ip+":5000/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

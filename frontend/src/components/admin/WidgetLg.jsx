@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import {format} from "timeago.js"
 import axios from "axios";
 import styled from "styled-components";
-import { useNavigate } from 'react-router-dom';
 import { getToken } from "../../authUtils";
-
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
 flex: 2;
@@ -74,10 +73,10 @@ export default function WidgetLg() {
 
   const fetchData = async () => {
     try {
-      const ordersResponse = await axios.get("http://localhost:5000/api/orders",{headers});
+      const ordersResponse = await axios.get("http://"+ip+":5000/api/orders",{headers});
 
       const ordersWithUser = await Promise.all(ordersResponse.data.map(async (order) => {
-        const userResponse = await axios.get(`http://localhost:5000/api/users/find/${order.userId}`,{headers});
+        const userResponse = await axios.get(`http://${ip}:5000/api/users/find/${order.userId}`,{headers});
         const user = userResponse.data;
         return { ...order, userId: user.email };
       }));

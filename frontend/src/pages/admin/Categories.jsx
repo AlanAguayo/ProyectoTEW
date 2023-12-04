@@ -12,6 +12,7 @@ import { storage } from "../../firebase"
 import { ref, listAll, getDownloadURL, deleteObject } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import { checkAdmin, getToken } from "../../authUtils";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
 display: flex;
@@ -63,7 +64,7 @@ export default function CategoryList() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/categories",{headers});
+      const response = await axios.get("http://"+ip+":5000/api/categories",{headers});
       setCategoriesItems(response.data);
     } catch (error) {
     }
@@ -95,7 +96,7 @@ export default function CategoryList() {
     
     if (confirmDelete) {
       try {
-      await axios.delete(`http://localhost:5000/api/categories/${categoryId}`,{headers});
+      await axios.delete(`http://${ip}:5000/api/categories/${categoryId}`,{headers});
       
       const imageRefToDelete = ref(storage, `categories/${categoryId}`);
       await deleteObject(imageRefToDelete);

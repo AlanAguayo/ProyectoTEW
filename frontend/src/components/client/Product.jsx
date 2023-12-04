@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { getToken } from "../../authUtils";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { ip } from '../../constants.js';
 
 const Info = styled.div`
   opacity: 0;
@@ -76,8 +77,6 @@ const Name = styled.div`
   margin-top: 10px;
 `;
 
-
-
 const Product = ({ item }) => {
 
   const id = localStorage.getItem('id');
@@ -93,7 +92,7 @@ const Product = ({ item }) => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/carts/${id}`, { headers });
+        const response = await axios.get(`http://${ip}:5000/api/carts/${id}`, { headers });
         setCart(response.data);
         
       } catch (error) {
@@ -120,7 +119,7 @@ const Product = ({ item }) => {
   
       // Make the API request to update the cart
       const response = await axios.put(
-        `http://localhost:5000/api/carts/${cart._id}`,
+        `http://${ip}:5000/api/carts/${cart._id}`,
         updatedCart,
         { headers }
       );

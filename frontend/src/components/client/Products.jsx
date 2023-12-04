@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { popularProducts } from "../../data";
 import Product from "./Product";
 import axios from "axios";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   padding: 20px;
@@ -29,12 +29,12 @@ const Products = ({ cat, filters, sort }) => {
       try {
         const res = await axios.get(
           cat
-            ? `http://localhost:5000/api/products`
-            : "http://localhost:5000/api/products"
+            ? `http://${ip}:5000/api/products`
+            : "http://"+ip+":5000/api/products"
         );
         setProducts(res.data);
       } catch (err) {
-        setProducts(popularProducts);
+
       }
     };
     getProducts();

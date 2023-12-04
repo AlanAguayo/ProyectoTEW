@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { checkAdmin, getToken } from "../../authUtils";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   display: flex;
@@ -73,7 +74,7 @@ const NewCoupon = () => {
     if(id!=="new"){
     const fetchCouponData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/coupons/${id}`,{headers});
+        const response = await axios.get(`http://${ip}:5000/api/coupons/${id}`,{headers});
         setFormData(response.data);
       } catch (error) {
         console.error("Error fetching coupon data:", error);
@@ -98,9 +99,9 @@ const NewCoupon = () => {
   const handleCreateCoupon = async () => {
     try {
       if (id!=="new") {
-        await axios.put(`http://localhost:5000/api/coupons/${id}`, formData,{headers});
+        await axios.put(`http://${ip}:5000/api/coupons/${id}`, formData,{headers});
       } else {
-        await axios.post(`http://localhost:5000/api/coupons`, formData,{headers});
+        await axios.post(`http://${ip}:5000/api/coupons`, formData,{headers});
       }
       navigate("/admin/coupons");
     } catch (error) {

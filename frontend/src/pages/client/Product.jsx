@@ -10,6 +10,7 @@ import { getToken } from "../../authUtils";
 import { useNavigate } from 'react-router-dom';
 import { addProduct } from "../../redux/cartRedux";
 import { useDispatch } from "react-redux";
+import { ip } from '../../constants.js';
 
 const Container = styled.div``;
 
@@ -137,7 +138,7 @@ const Product = () => {
 
   const getData = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/products/${idProducto}`
+      const response = await axios.get(`http://${ip}:5000/api/products/${idProducto}`
       );
       setData(response.data); 
     } catch (error) {
@@ -153,7 +154,7 @@ const Product = () => {
     if (color != '' && size != '') {
       setError('');
       try {
-        const response = await axios.post(`http://localhost:5000/api/carts`,
+        const response = await axios.post(`http://${ip}:5000/api/carts`,
           {
             userId: idUser,
             products: [

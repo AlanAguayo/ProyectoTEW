@@ -7,7 +7,7 @@ import { useLocation } from "react-router";
 import { useState } from "react";
 import axios from 'axios';
 import { useEffect } from "react";
-
+import { ip } from '../../constants.js';
 
 const Container = styled.div``;
 
@@ -46,7 +46,7 @@ const ProductList = () => {
   useEffect(() => {
     const obtenerCategoria = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/categories/${cat}`);
+        const response = await axios.get(`http://${ip}:5000/api/categories/${cat}`);
         setCategoria(response.data);
       } catch (error) {
         console.error("Error al obtener la categoría:", error);

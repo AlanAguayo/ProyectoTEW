@@ -10,6 +10,7 @@ import 'ag-grid-community/styles//ag-grid.css';
 import 'ag-grid-community/styles//ag-theme-quartz.css';
 import { useNavigate } from 'react-router-dom';
 import { checkAdmin, getToken } from "../../authUtils";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
 display: flex;
@@ -51,7 +52,7 @@ export default function CouponList() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/coupons",{headers});
+      const response = await axios.get("http://"+ip+":5000/api/coupons",{headers});
       setCouponsItems(response.data);
     } catch (error) {
       console.error("Error fetching coupons data:", error);
@@ -68,7 +69,7 @@ export default function CouponList() {
     
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:5000/api/coupons/${couponId}`,{headers});
+        await axios.delete(`http://${ip}:5000/api/coupons/${couponId}`,{headers});
         fetchData();
       } catch (error) {
         console.error(`Error al eliminar el usuario con ID ${couponId}:`, error);

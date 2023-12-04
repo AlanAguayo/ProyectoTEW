@@ -13,6 +13,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } fro
 import { useParams } from "react-router-dom";
 import { list, getDownloadURL, deleteObject } from 'firebase/storage';
 import { checkAdmin, getToken } from "../../authUtils";
+import { ip } from '../../constants.js';
 
 
 const Container = styled.div`
@@ -198,7 +199,7 @@ const Product = () => {
     checkAdmin(navigate);
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/products/${id}`,{headers});
+        const response = await axios.get(`http://${ip}:5000/api/products/${id}`,{headers});
         const productData = response.data;
 
         setFormData({
@@ -214,7 +215,7 @@ const Product = () => {
         setSizes(productData.size);
 
 
-        const category = await axios.get(`http://localhost:5000/api/categories/${productData.category}`,{headers});
+        const category = await axios.get(`http://${ip}:5000/api/categories/${productData.category}`,{headers});
         const selectedCategoryOption = { value: category.data._id, label: category.data.name };
         setSelectedCategory(selectedCategoryOption);
 
@@ -234,7 +235,7 @@ const Product = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/categories",{headers});
+        const response = await axios.get("http://"+ip+":5000/api/categories",{headers});
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -243,7 +244,7 @@ const Product = () => {
 
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/orders",{headers});
+        const response = await axios.get("http://"+ip+":5000/api/orders",{headers});
         setOrders(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -279,7 +280,7 @@ const Product = () => {
         price: parseFloat(formData.price),
       };
 
-      await axios.put("http://localhost:5000/api/products/"+id, productData,{headers});
+      await axios.put("http://"+ip+":5000/api/products/"+id, productData,{headers});
 
       navigate("/admin/products");
     } catch (error) {

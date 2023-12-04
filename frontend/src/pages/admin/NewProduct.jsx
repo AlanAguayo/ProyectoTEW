@@ -10,6 +10,7 @@ import { useDropzone } from "react-dropzone";
 import { ref, uploadBytes } from 'firebase/storage';
 import { storage } from '../../firebase';
 import { checkAdmin, getToken } from "../../authUtils";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   display: flex;
@@ -154,7 +155,7 @@ const NewProduct = () => {
     checkAdmin(navigate);
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/categories",{headers});
+        const response = await axios.get("http://"+ip+":5000/api/categories",{headers});
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -184,7 +185,7 @@ const NewProduct = () => {
         price: parseFloat(formData.price),
       };
 
-      const createdProductResponse = await axios.post("http://localhost:5000/api/products", productData,{headers});
+      const createdProductResponse = await axios.post("http://"+ip+":5000/api/products", productData,{headers});
 
     const createdProductId = createdProductResponse.data._id;
 

@@ -14,6 +14,7 @@ import { storage } from "../../firebase";
 import { ref, getDownloadURL } from 'firebase/storage';
 import { checkAdmin, getToken } from "../../authUtils";
 import { useNavigate } from "react-router-dom";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   display: flex;
@@ -66,10 +67,10 @@ useEffect(() => {
     checkAdmin(navigate);
     const fetchData = async () => {
         try {
-            const orderResponse = await axios.get(`http://localhost:5000/api/orders/${id}`,{headers});
+            const orderResponse = await axios.get(`http://${ip}:5000/api/orders/${id}`,{headers});
             const order = orderResponse.data;
 
-            const userResponse = await axios.get(`http://localhost:5000/api/users/find/${order.userId}`,{headers});
+            const userResponse = await axios.get(`http://${ip}:5000/api/users/find/${order.userId}`,{headers});
             const user = userResponse.data;
 
             const orderWithUserDetails = {
@@ -81,17 +82,17 @@ useEffect(() => {
             };
 
             if (order.coupon) {
-                const couponResponse = await axios.get(`http://localhost:5000/api/coupons/${order.coupon}`,{headers});
+                const couponResponse = await axios.get(`http://${ip}:5000/api/coupons/${order.coupon}`,{headers});
                 const coupon = couponResponse.data;
                 setOrderDetails({ ...orderWithUserDetails, couponCode: coupon.code, couponDiscount: coupon.discount });
             } else {
                 setOrderDetails(orderWithUserDetails);
             }
 
-            const productsResponse = await axios.get("http://localhost:5000/api/products",{headers});
+            const productsResponse = await axios.get("http://"+ip+":5000/api/products",{headers});
 
             const productsWithCategory = await Promise.all(productsResponse.data.map(async (product) => {
-                const categoryResponse = await axios.get(`http://localhost:5000/api/categories/${product.category}`,{headers});
+                const categoryResponse = await axios.get(`http://${ip}:5000/api/categories/${product.category}`,{headers});
                 const category = categoryResponse.data;
                 return { ...product, category: category.name };
             }));

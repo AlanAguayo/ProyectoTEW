@@ -10,6 +10,7 @@ import 'ag-grid-community/styles//ag-grid.css';
 import 'ag-grid-community/styles//ag-theme-quartz.css';
 import { checkAdmin, getToken } from "../../authUtils";
 import { useNavigate } from "react-router-dom";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
 display: flex;
@@ -33,17 +34,17 @@ export default function OrderList() {
 
   const fetchData = async () => {
     try {
-      const ordersResponse = await axios.get("http://localhost:5000/api/orders",{headers});
+      const ordersResponse = await axios.get("http://"+ip+":5000/api/orders",{headers});
 
       const ordersWithUser = await Promise.all(ordersResponse.data.map(async (order) => {
-        const userResponse = await axios.get(`http://localhost:5000/api/users/find/${order.userId}`,{headers});
+        const userResponse = await axios.get(`http://${ip}:5000/api/users/find/${order.userId}`,{headers});
         const user = userResponse.data;
         return { ...order, userId: user.email };
       }));
 
       const ordersWithCoupon = await Promise.all(ordersWithUser.map(async (order) => {
         if (order.coupon) {
-          const couponResponse = await axios.get(`http://localhost:5000/api/coupons/${order.coupon}`,{headers});
+          const couponResponse = await axios.get(`http://${ip}:5000/api/coupons/${order.coupon}`,{headers});
           const coupon = couponResponse.data;
           return { ...order, coupon: coupon.code };
         }

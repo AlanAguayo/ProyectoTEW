@@ -12,6 +12,7 @@ import { storage } from "../../firebase";
 import { ref, getDownloadURL } from "firebase/storage";
 import { checkAdmin, getToken } from "../../authUtils";
 import { useNavigate } from "react-router-dom";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   display: flex;
@@ -67,12 +68,12 @@ export default function ProductList() {
 
   const fetchData = async () => {
     try {
-      const productsResponse = await axios.get("http://localhost:5000/api/products",{headers});
+      const productsResponse = await axios.get("http://"+ip+":5000/api/products",{headers});
 
       const productsWithCategory = await Promise.all(
         productsResponse.data.map(async (product) => {
           const categoryResponse = await axios.get(
-            `http://localhost:5000/api/categories/${product.category}`,{headers}
+            `http://${ip}:5000/api/categories/${product.category}`,{headers}
           );
           const category = categoryResponse.data;
           return { ...product, category: category.name };
@@ -105,7 +106,7 @@ export default function ProductList() {
 
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:5000/api/products/${productId}`,{headers});
+        await axios.delete(`http://${ip}:5000/api/products/${productId}`,{headers});
 
         fetchData();
       } catch (error) {

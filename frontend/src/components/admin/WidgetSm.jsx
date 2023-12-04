@@ -4,8 +4,8 @@ import axios from "axios";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
-import { checkAuth, getToken } from "../../authUtils";
-
+import { getToken } from "../../authUtils";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   flex: 1;
@@ -75,7 +75,7 @@ export default function WidgetSm() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/users",{headers});
+        const response = await axios.get("http://"+ip+":5000/api/users",{headers});
         setUsers(response.data.slice(0, 10));
       } catch (error) {
         console.error("Error fetching users:", error);

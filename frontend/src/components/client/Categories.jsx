@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { categories } from "../../data";
 import CategoryItem from "./CategoryItem";
 import { useEffect, useState } from "react";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const Categories = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/categories");
+        const response = await fetch("http://"+ip+":5000/api/categories");
         const data = await response.json();
         setCategories(data);
       } catch (error) {

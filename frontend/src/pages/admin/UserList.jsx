@@ -10,6 +10,7 @@ import 'ag-grid-community/styles//ag-grid.css';
 import 'ag-grid-community/styles//ag-theme-quartz.css';
 import { checkAdmin, getToken } from "../../authUtils";
 import { useNavigate } from "react-router-dom";
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
 display: flex;
@@ -46,7 +47,7 @@ export default function UserList() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/users",{headers});
+      const response = await axios.get("http://"+ip+":5000/api/users",{headers});
       setUsersItems(response.data);
     } catch (error) {
       console.error("Error fetching users data:", error);
@@ -63,7 +64,7 @@ export default function UserList() {
     
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:5000/api/users/${userId}`,{headers});
+        await axios.delete(`http://${ip}:5000/api/users/${userId}`,{headers});
         fetchData();
       } catch (error) {
         console.error(`Error al eliminar el usuario con ID ${userId}:`, error);

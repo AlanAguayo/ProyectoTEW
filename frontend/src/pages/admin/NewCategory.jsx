@@ -8,7 +8,7 @@ import { storage } from "../../firebase"
 import { ref, uploadBytes } from 'firebase/storage';
 import { FaCamera } from "react-icons/fa";
 import { checkAdmin, getToken } from "../../authUtils";
-
+import { ip } from '../../constants.js';
 
 const Container = styled.div`
   display: flex;
@@ -117,7 +117,7 @@ const NewCategory = () => {
     if(id!=="new"){
     const fetchCategoryData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/categories/${id}`,{headers});
+        const response = await axios.get(`http://${ip}:5000/api/categories/${id}`,{headers});
         setFormData(response.data);
       } catch (error) {
         console.error("Error fetching category data:", error);
@@ -143,9 +143,9 @@ const NewCategory = () => {
     try {
       let categoryId = id;
       if (id!=="new") {
-        await axios.put(`http://localhost:5000/api/categories/${id}`, formData,{headers});
+        await axios.put(`http://${ip}:5000/api/categories/${id}`, formData,{headers});
       } else {
-        const response = await axios.post(`http://localhost:5000/api/categories`, formData,{headers});
+        const response = await axios.post(`http://${ip}:5000/api/categories`, formData,{headers});
         categoryId = response.data._id;
       }
       navigate("/admin/categories");
