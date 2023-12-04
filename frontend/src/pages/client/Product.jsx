@@ -216,7 +216,7 @@ const Product = () => {
       <Navbar />
       <Wrapper>
         <ImgContainer>
-          <Image src={"https://firebasestorage.googleapis.com/v0/b/proyectotew-d69b0.appspot.com/o/products%2F" + data?._id + "%2F1.jpg?alt=media&token=5494075e-addc-4a20-9845-5506773a520c"} alt="Producto" />
+          <Image src={"https://firebasestorage.googleapis.com/v0/b/proyectotew-d69b0.appspot.com/o/products%2F" + data?._id + "%2F1.jpg?alt=media"} alt="Producto" />
         </ImgContainer>
         <InfoContainer>
           <Title>{data?.name}.</Title>

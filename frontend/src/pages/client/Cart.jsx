@@ -1,12 +1,10 @@
 import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Announcement from "../../components/client/Announcement";
 import Footer from "../../components/client/Footer";
 import Navbar from "../../components/client/Navbar";
 import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
-import { userRequest } from "../../requestMethods";
 import { useNavigate } from 'react-router-dom';
 import { checkAuth, getToken } from "../../authUtils";
 import axios from "axios";
@@ -29,25 +27,6 @@ const Top = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 20px;
-`;
-
-const TopButton = styled.button`
-  padding: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  border: ${(props) => props.type === "filled" && "none"};
-  background-color: ${(props) =>
-    props.type === "filled" ? "black" : "transparent"};
-  color: ${(props) => props.type === "filled" && "white"};
-`;
-
-const TopTexts = styled.div`
-`;
-
-const TopText = styled.span`
-  text-decoration: underline;
-  cursor: pointer;
-  margin: 0px 10px;
 `;
 
 const Bottom = styled.div`
@@ -84,17 +63,6 @@ const Details = styled.div`
 `;
 
 const ProductName = styled.span``;
-
-const ProductId = styled.span``;
-
-const ProductColor = styled.div`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: ${(props) => props.color};
-`;
-
-const ProductSize = styled.span``;
 
 const PriceDetail = styled.div`
   flex: 1;
@@ -210,6 +178,73 @@ const Cart = () => {
     fetchCart();
   }, [id, navigate]);
 
+  const handleIncrement = async (productId) => {
+    try {
+      const productIndex = cart.products.findIndex((product) => product.productId === productId);
+
+      const updatedCart = { ...cart };
+      
+      updatedCart.products[productIndex].quantity += 1;
+
+      const response = await axios.put(
+        `http://localhost:5000/api/carts/${cart._id}`,
+        updatedCart,
+        { headers }
+      );
+
+      setCart(response.data);
+
+    } catch (error) {
+      console.error("Error al incrementar la cantidad:", error);
+    }
+  };
+
+  const handleDecrement = async (productId) => {
+    try {
+      const productIndex = cart.products.findIndex((product) => product.productId === productId);
+
+      if (productIndex === -1) {
+        console.error("No se encontró el producto en el carrito.");
+        return;
+      }
+
+      const updatedCart = { ...cart };
+
+      updatedCart.products[productIndex].quantity -= 1;
+
+      const response = await axios.put(
+        `http://localhost:5000/api/carts/${cart._id}`,
+        updatedCart,
+        { headers }
+      );
+
+      setCart(response.data);
+
+    } catch (error) {
+      console.error("Error al decrementar la cantidad:", error);
+    }
+  };
+
+  const handleDelete = async (productId) => {
+    try {
+      const updatedCart = { ...cart };
+
+      updatedCart.products = updatedCart.products.filter(product => product.productId !== productId);
+
+      const response = await axios.put(
+        `http://localhost:5000/api/carts/${cart._id}`,
+        updatedCart,
+        { headers }
+      );
+
+      setCart(updatedCart);
+
+    } catch (error) {
+      console.error("Error al eliminar el producto:", error);
+    }
+  };
+
+
   const subtotal = productsDetails.reduce((acc, productDetail, index) => {
     const productPrice = productDetail.price;
     const productQuantity = cart.products[index].quantity;
@@ -264,15 +299,17 @@ const Cart = () => {
                 </ProductDetail>
                 <PriceDetail>
                   <ProductPrice>
-                    $ {productDetail.price * cart.products[index].quantity}
+                    $ {(productDetail.price * cart.products[index].quantity).toFixed(2)}
                   </ProductPrice>
                   <ProductAmountContainer>
-                    <FaPlus />
+                    <FaPlus onClick={() => handleIncrement(productDetail._id)} />
                     <ProductAmount>{cart.products[index].quantity}</ProductAmount>
-                    <FaMinus />
+                    {cart.products[index].quantity !== 1 && 
+                    <FaMinus onClick={() => handleDecrement(productDetail._id)}/>
+                  }
                   </ProductAmountContainer>
                 </PriceDetail>
-                <DeleteIcon />
+                <DeleteIcon onClick={() => handleDelete(productDetail._id)}/>
               </Product>
             ))}
             <Hr />
@@ -281,7 +318,7 @@ const Cart = () => {
             <SummaryTitle>Orden</SummaryTitle>
             <SummaryItem>
               <SummaryItemText>Subtotal</SummaryItemText>
-              <SummaryItemPrice>$ {subtotal}</SummaryItemPrice>
+              <SummaryItemPrice>$ {subtotal.toFixed(2)}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Envio</SummaryItemText>
@@ -291,7 +328,7 @@ const Cart = () => {
 
               <SummaryItem>
                 <SummaryItemText>Descuento</SummaryItemText>
-                <SummaryItemPrice>{discount * 100} %</SummaryItemPrice>
+                <SummaryItemPrice>{(discount * 100).toFixed(2)} %</SummaryItemPrice>
               </SummaryItem>
             )}
             <SummaryItem>
