@@ -106,7 +106,7 @@ const Register = () => {
       if (response.ok) {
         const responseData = await response.json();
         console.log(formData.email);
-        const responseLogIn = await fetch("http://localhost:5000/api/auth/login", {
+        const responseLogIn = await fetch("http://"+id+":5000/api/auth/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -119,7 +119,7 @@ const Register = () => {
         if (responseLogIn.ok) {
           const responseDataLog = await responseLogIn.json();
           console.log(responseDataLog);
-          const responseCart = await fetch("http://localhost:5000/api/carts", {
+          const responseCart = await fetch("http://"+id+":5000/api/carts", {
             method: "POST",
             headers: {
               'Authorization': `Bearer ${responseDataLog.accessToken}`,
