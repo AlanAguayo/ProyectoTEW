@@ -12,7 +12,7 @@ const Container = styled.div`
 `;
 
 const Announcement = () => {
-  return <Container>Obten un 10% de descuento con el cupón BF112023</Container>;
+  return <Container>Obten un 20% de descuento con el cupón BF112023</Container>;
 };
 
 export default Announcement;
